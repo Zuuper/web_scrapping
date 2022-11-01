@@ -1,0 +1,31 @@
+{
+  "property": {
+    "prefix": "//div[@data-filters-group=\"ht_id\"]",
+    "open_all": "/button[@class=\"fc63351294 a168c6f285 d65b7d20ae a25b1d9e47\"]",
+    "list": {
+        "villas" : "//input[@value=\"ht_id=213\"]",
+        "guesthouses": "//input[@value=\"ht_id=216\"]",
+        "hotels": "//input[@value=\"ht_id=204\"]",
+        "homestays": "//input[@value=\"ht_id=222\"]",
+        "apartment": "//input[@value=\"ht_id=201\"]",
+        "hostels": "//input[@value=\"ht_id=203\"]",
+        "resort_villages": "//input[@value=\"ht_id=212\"]",
+        "resorts": "//input[@value=\"ht_id=206\"]",
+        "vacation_homes": "//input[@value=\"ht_id=220\"]",
+        "bed_and_breakfasts": "//input[@value=\"ht_id=208\"]",
+        "lodges": "//input[@value=\"ht_id=221\"]"
+       },
+    "detail": {
+      "booking_com_detail_link": {
+        "x_path" :"//div[@data-arp-properties-list=\"1\"]//h3/a",
+        "attr": "href"
+      },
+      "title": {
+        "x_path": "//div[@data-arp-properties-list=\"1\"]//h3/a/div[1]",
+        "attr": "text"
+      },
+
+
+    }
+  }
+}

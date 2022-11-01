@@ -1,0 +1,7 @@
+selenium~=4.5.0
+parsel~=1.6.0
+pandas~=1.4.3
+geopy~=2.2.0
+Scrapy~=2.7.0
+instagrapi~=1.16.29
+TikTokApi~=5.2.2

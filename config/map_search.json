@@ -1,0 +1,35 @@
+{
+  "surface_search_config" : {
+    "data_collected" : ["title","review_point","review_total","price_level",
+                      "sub_category","address","short_description","link"],
+    "data_xpath" : {
+      "title": "//div[@jsan=\"7.qBF1Pd,7.fontHeadlineSmall,t-u3p6PfXaXm4\"]/span",
+      "review_point": "//span[@jsan=\"7.ZkP5Je,0.aria-label,0.role,t-kqtGnPs-9G0\"]/span[1]",
+      "review_total": "//span[@jsan=\"7.ZkP5Je,0.aria-label,0.role,t-kqtGnPs-9G0\"]/span[2]",
+      "price_level": "//span[@role=\"img\"][@jsan=\"0.aria-label,0.role\"]",
+      "sub_category": "//div[@class=\"W4Efsd\"][@jsinstance=\"0\"]/span[1]/jsl/span[2]",
+      "address": "//div[@class=\"W4Efsd\"][@jsinstance=\"0\"]/span[2]/jsl/span[2]",
+      "short_description": "//div[@class=\"W4Efsd\"][@jsinstance=\"1\"]/span[1]/jsl/span[2]",
+      "link": "//a[@jsan=\"7.hfpxzc,0.aria-label,8.href,0.jsaction,0.jslog\"]"
+    },
+    "data_area": {
+      "title": "text",
+      "review_point": "text",
+      "review_total": "text",
+      "price_level": "text",
+      "sub_category": "text",
+      "address": "text",
+      "short_description": "text",
+      "link": "href"
+    },
+    "utility_xpath" : {
+      "zoom_out": "//button[@id=\"widget-zoom-out\"]",
+      "zoom_in": "//button[@id=\"widget-zoom-in\"]",
+      "loading_icon": "//div[@jsan=\"7.qjESne,7.veYFef\"]",
+      "search_area": "//div[@role=\"feed\"]",
+      "end_sign": "//span[@class=\"HlvSq\"]",
+      "detail_search_area": "//a[@class=\"hfpxzc\"]"
+
+    }
+  }
+}
