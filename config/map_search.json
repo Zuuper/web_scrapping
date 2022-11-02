@@ -31,5 +31,43 @@
       "detail_search_area": "//a[@class=\"hfpxzc\"]"
 
     }
+  },
+  "deep_search_config": {
+    "data_collection": {
+      "title":  {},
+      "review_point": {},
+      "review_total": {},
+      "price_level": {},
+      "sub_category": {},
+      "address": {},
+      "metadata": {
+        "need_to_click": true,
+        "alternative": {
+          "x_path": "//div[@role=\"region\"][@class=\"y0K5Df\"]//div[@jsan=\"t-1S0zc0ZApnU,7.PYvSYb,0.jslog,t-zvBBh-k3a_E\"]/span",
+          "type": "text"
+        }
+      },
+      "open_hours": {
+        "need_to_click": true,
+        "alternative": {
+          "xpath": "//div[@jsan=\"t-Y_gmqpSdiUU,7.OqCZI,7.fontBodyMedium,7.WVXvdc,0.jslog\"]/div[2]",
+          "type": "aria-label"
+        }
+      },
+      "site": {},
+      "contact_number": {}
+    },
+    "data_xpath": {
+      "title": "//h1[@jsan=\"7.DUwDvf,7.fontHeadlineLarge\"]/span[1]",
+      "review_point": "//div[@jsaction=\"pane.rating.moreReviews\"]/span[1]//span[@aria-hidden=\"true\"]",
+      "review_total": "//button[@jsaction=\"pane.rating.moreReviews\"]",
+      "price_level": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//span[@jsan=\"0.aria-label\"]",
+      "sub_category": "//button[@jsaction=\"pane.rating.category\"]",
+      "address": "//*[contains(@data-item-id, \"address\")]",
+      "metadata": "//button[@jsaction=\"pane.attributes.expand;ptrdown:ripple.play;mousedown:ripple.play;keydown:ripple.play\"]",
+      "open_hours": "//button[@data-item-id=\"oh\"]",
+      "site": "//*[@data-item-id=\"authority\"]",
+      "contact_number": "//*[contains(@data-item-id,\"phone\")]/div/div[2]/div[1]"
+    }
   }
 }

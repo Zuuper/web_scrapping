@@ -1,60 +1,20 @@
-import threading
+import threading, queue
 import time
+
+import numpy as np
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
 from utilities import google_maps_utility, setup_search, google_utility, init_instagram_data_collection
 from geopy.geocoders import Nominatim
-import multiprocessing
+from multiprocessing import cpu_count, Process, Queue, Lock
 
 
-def setup_search_backup():
-    web_option_list = ['google maps', 'other']
-    search_area = ['stay', 'restaurant', 'nature and ']
-    print('!!! WEB SCRAPPER !!!')
-    print("where do you want to search ? the options:")
-    for idx in range(len(web_option_list)):
-        print(f"{idx + 1}. {web_option_list[idx]}")
-    website = int(input("your choice (pick number): "))
-    if not website or website > len(web_option_list):
-        website = int(input("pick again, make sure you pick a number of the options: "))
-    website = web_option_list[website - 1]
-    query = input("what you want to search ? ")
-    location = input('where do you want to search ? pick only one location ')
-    loc = Nominatim(user_agent="GetLoc")
-    getloc = loc.geocode(location)
-    position = {'lat': getloc.latitude, 'lon': getloc.longitude}
-    print(getloc)
-    print(f"your coordinate are : {position}")
-    return website, query, position
-
-
-def main_backup():
-    config_dir = "config/map_search.json"
-    website, query, position = setup_search()
-    options = Options()
-    # options.headless = True
-    options.add_argument("--lang=en-US")
-    options.add_argument("--window-size=1336,768")
-    if website == 'google maps':
-        engine = google_maps_utility.MapsDataCollection(config_dir, options)
-        engine.search_on_map(query, position)
-        # engine.init_location(position)
-        # print(engine.position)
-        data = engine.surface_search(max_iteration=100, vertical_coordinate=100000)
-        df = pd.DataFrame(data)
-        df = df.drop_duplicates()
-        df.to_excel(f'{query}_surface_search.xlsx')
-        print('finish exporting data, web scraping is done 100%. enjoy')
-    else:
-        print('you only can search on google maps for now')
-
-
-def google_maps_collection(search_param, location, max_iteration=100):
+def google_maps_collection(search_param, location, max_iteration=100, using_multiprocessor=False, total_cpu=0):
     config_dir = "config/map_search.json"
     maps_collection = google_maps_utility.MapsDataCollection
     options = Options()
-    # options.headless = True
-    # options.add_argument("--kiosk")
+    options.headless = True
+    options.add_argument("--kiosk")
     options.add_argument("--lang=en-US")
     options.add_argument(r"--user-data-dir=C:\Users\Asus\AppData\Local\Google\Chrome\User Data")
     options.add_argument(r'--profile-directory=Default')
@@ -63,7 +23,7 @@ def google_maps_collection(search_param, location, max_iteration=100):
     position = {'lat': location.latitude, 'lon': location.longitude}
     engine.search_on_map(search_param, position)
 
-    data = engine.surface_search(max_iteration=max_iteration, vertical_coordinate=100000)
+    data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=100000)
     df = pd.DataFrame(data)
     df = df.drop_duplicates()
     df.to_excel(f'{search_param}_surface_search.xlsx')
@@ -71,29 +31,56 @@ def google_maps_collection(search_param, location, max_iteration=100):
     return data
 
 
-def google_collection(search_param):
+def google_collection(search_value, search_param, queue_: queue):
     config_dir = "config/google_search.json"
     google = google_utility.GoogleCollection
     options = Options()
     options.headless = True
     options.add_argument("--lang=en-US")
     options.add_argument("--window-size=1280,720")
-    engine = google(config_dir, options)
-    engine.search_data(search_param)
-    return engine.get_first_search()
+    results = []
+    for search_ in search_value:
+        engine = google(config_dir, options)
+        engine.search_data(f'{search_} {search_param}')
+        result = engine.get_first_search().split()
+        for res in result:
+            if res.startswith("("):
+                res = res.replace('(', '')
+                res = res.replace(')', '')
+                if res.startswith('@'):
+                    query = res.replace("@", "")
+                    # print(f'getting instagram post for {query}')
+                    queue_.put(query)
+                    results.append(query)
+    return results
 
 
-def get_instagram_user_from_google(search_value: list, search_area: str, search_location: str, saved_list: list):
-    print(f'query param: {search_area} {search_value} {search_location} instagram')
-    result = google_collection(f"{search_area} {search_value} {search_location} instagram").split(" ")
-    for res in result:
-        if res.startswith("("):
-            res = res.replace('(', '')
-            res = res.replace(')', '')
-            if res.startswith('@'):
-                query = res.replace("@", "")
-                print(f'getting instagram post for {query}')
-                saved_list.append(query)
+def get_instagram_user_from_google(search_value: list, search_location: str, saved_list: list,
+                                   queue_: Queue, using_queue=False, max_thread=2):
+    """
+    Get instagram user from Google search.
+    :param search_value: list of value you want to search (ex: ['villa kembang sari', 'restaurant be guling'])
+    :param search_location: location of search (ex: 'Badung Bali')
+    :param saved_list: array where your want to put your temporary file
+    :param queue_: Queue modul for multiprocessing
+    :param using_queue:
+    :param max_thread:
+    :return:
+    """
+    jobs = []
+    thread_queue = queue.Queue()
+    new_search_value = np.array_split(search_value, max_thread)
+    for search_value in new_search_value:
+        job = threading.Thread(target=google_collection, args=[search_value, f"{search_location} instagram",
+                                                               thread_queue])
+        jobs.append(job)
+        job.start()
+    for job in jobs:
+        job.join()
+
+    while not thread_queue.empty():
+        queue_.put(thread_queue.get())
+    return saved_list
 
 
 def main():
@@ -106,41 +93,40 @@ def main():
     5. profit :D
     :return:
     """
+    total_cpu = cpu_count()
+    max_thread = 2
     search_area, search_param, search_engine, search_location, detail_search_location, instagram_scrap = setup_search()
     print(search_area, search_param, search_engine, search_location, instagram_scrap)
+    start = time.time()
     data = []
     if search_engine == 'google maps':
         data = google_maps_collection(f'{search_param} near {search_location.address}', search_location,
-                                      max_iteration=100)
+                                      max_iteration=100, using_multiprocessor=True, total_cpu=total_cpu)
     elif search_engine == 'booking.com':
         pass
-
+    end = time.time()
+    print(f"total time consume to get all data from google maps is : {end - start} s")
     queries = []
+    result = Queue()
     search_value = list(dict.fromkeys([d['title'] for d in data]))
-
-    # for d in data:
-    #     search_value = d['title']
-    #     result = google_collection(f"{search_value} instagram").split(" ")
-    #     # print(f'possible instagram: {result}')
-    #     for res in result:
-    #         if res.startswith("("):
-    #             res = res.replace('(', '')
-    #             res = res.replace(')', '')
-    #             if res.startswith('@'):
-    #                 query = res.replace("@", "")
-    #                 print(f'getting instagram post for {query}')
-    #                 queries.append(query)
     jobs = []
-    for search in search_value:
-        job = threading.Thread(target=get_instagram_user_from_google, args=[search, search_area,
-                                                                            detail_search_location, queries])
+    print("collecting instagram ID...")
+    split_search_value = np.array_split(search_value, total_cpu)
+
+    for search_value in split_search_value:
+        job = Process(target=get_instagram_user_from_google, args=[search_value,
+                                                                   detail_search_location, queries,
+                                                                   result, True, max_thread])
         jobs.append(job)
-    for job in jobs:
         job.start()
     for job in jobs:
         job.join()
-
-    print(queries)
+    print(f'result after collecting data is {result}')
+    while not result.empty():
+        queries.append(result.get())
+    print(f'total IG username is : {len(queries)}')
+    end = time.time()
+    print(f"total time consume to complete all is: {end - start}s")
     # init_instagram_data_collection(queries, instagram_scrap, 20, False, total_pagination=5, total_media_pagination=4)
 
 

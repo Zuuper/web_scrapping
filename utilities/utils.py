@@ -125,7 +125,6 @@ def get_location_on_map():
 
     true_choice = []
     for choice in detail_location_choice:
-        print(choice)
         choice_value = detail_location[int(choice) - 1]
         true_choice.append(address[choice_value])
     user_choice = "".join(f"{str(value)} " for value in true_choice)
@@ -233,3 +232,4 @@ def generate_folder(file_location, file_name='', is_parent_folder=True):
         folder_avail_child = os.path.isdir(new_file_location)
         if not folder_avail_child:
             os.makedirs(new_file_location)
+

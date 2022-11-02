@@ -26,7 +26,7 @@ class GoogleCollection:
         self.driver.find_element(By.XPATH, search_form).send_keys(Keys.ENTER)
 
     def get_first_search(self):
-        first_result_element = '//div[@class="MjjYud"]//a//h3'
+        first_result_element = '//div[@class="yuRUbf"]//a//h3'
         result = self.driver.find_element(By.XPATH, first_result_element).text
         return result
 

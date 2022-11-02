@@ -48,6 +48,6 @@ Identities = [
 ]
 
 instagram = {
-    'username': 'pencipta_wibu_nusantara',
-    'password': 'InstagramTesting599'
+    'username': 'kennadarwin4',
+    'password': 'KennaDarwin123'
 }
