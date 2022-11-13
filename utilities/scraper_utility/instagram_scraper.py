@@ -28,8 +28,9 @@ class InstagramUtility:
     def __init__(self, user_id, password):
         self.settings = None
         self.client = Client()
+        print(user_id,password)
         self.client.login(username=user_id, password=password)
-        self.client.handle_exception = self.handle_exception
+        # self.client.handle_exception = self.handle_exception
         self.photo_id, self.video_id, self.igtv_id, self.reel_id, self.album_id = 1, 2, 2, 2, 8
         self.video_type, self.igtv_type, self.reel_type = 'feed', 'igtv', 'clips'
         self.username = ''
@@ -54,17 +55,29 @@ class InstagramUtility:
         media_id = media['media_type']
         product_type = media['product_type']
         id_data = media['pk']
+        try:
+            self.client.account_info()
+        except LoginRequired:
+            print('re login is required...')
+            self.client.relogin()
+            time.sleep(60)
         if media_id == self.photo_id:
-            return self.client.photo_download(id_data, f"{file_location}/photos")
+            # return self.client.photo_download(id_data, f"{file_location}/photos")
+            return self.client.photo_download(id_data, f"{file_location}/")
+
         elif media_id == self.video_id and product_type == self.video_type:
-            return self.client.video_download(id_data, f"{file_location}/videos")
+            # return self.client.video_download(id_data, f"{file_location}/videos")
+            return self.client.video_download(id_data, f"{file_location}/")
         elif media_id == self.reel_id and product_type == self.reel_type:
-            return self.client.clip_download(id_data, f"{file_location}/reels")
+            # return self.client.clip_download(id_data, f"{file_location}/reels")
+            return self.client.clip_download(id_data, f"{file_location}/")
         elif media_id == self.igtv_id and product_type == self.igtv_type:
-            return self.client.igtv_download(id_data, f"{file_location}/igtv")
+            # return self.client.igtv_download(id_data, f"{file_location}/igtv")
+            return self.client.igtv_download(id_data, f"{file_location}/")
         elif media_id == self.album_id:
-            utils.generate_folder(file_location=f"{file_location}/albums/", file_name=id_data, is_parent_folder=False)
-            return self.client.album_download(id_data, f"{file_location}/albums/{id_data}")
+            # utils.generate_folder(file_location=f"{file_location}/albums/", file_name=id_data, is_parent_folder=False)
+            utils.generate_folder(file_location=f"{file_location}/", file_name=id_data, is_parent_folder=False)
+            return self.client.album_download(id_data, f"{file_location}/{id_data}")
         else:
             raise Exception('')
 
@@ -76,10 +89,13 @@ class InstagramUtility:
             'igtv': [],
             'albums': [],
         }
+
         for media in medias:
             media = media.dict()
             media_id = media['media_type']
             product_type = media['product_type']
+
+
             if media_id == self.photo_id:
                 data['feed'].append(media)
             elif media_id == self.video_id and product_type == self.video_type:
@@ -164,13 +180,16 @@ class InstagramUtility:
 def init_instagram_data_collection(user_search, instagram_config={}, amount_media=5, is_using_all_media=False,
                                    total_pagination=0, total_media_pagination=5):
     username, password = cfg.instagram['username'], cfg.instagram['password']
+    print(f'instagram account => username: {username} || password: {password}')
     ig = InstagramUtility(username, password)
     client = ig.client
-    for user in user_search:
+    for user_list in user_search:
+        user = user_list[1]
+        location = user_list[0]
         user_id = client.user_id_from_username(user)
         user_detail = client.user_info_by_username(user).dict()
         print(f'self ID : {user_id}')
-        file_location = ig.setup_file_location(user)
+        file_location = ig.setup_file_location(location)
         amount_media = user_detail['media_count'] if is_using_all_media else amount_media
 
         if total_pagination != 0:
@@ -180,11 +199,14 @@ def init_instagram_data_collection(user_search, instagram_config={}, amount_medi
                 medias, end_cursor = client.user_medias_paginated(user_id, total_media_pagination,
                                                                   end_cursor=end_cursor)
                 medias_list.append(medias)
-            thread = []
+            jobs = []
+
             for medias in medias_list:
-                t = threading.Thread(target=ig.collecting_data, args=[instagram_config, file_location, medias])
-                thread.append(t)
-                t.start()
+                job = threading.Thread(target=ig.collecting_data, args=[instagram_config, file_location, medias])
+                jobs.append(job)
+                job.start()
+            for job in jobs:
+                job.join()
 
         else:
             maximum_medias = 100

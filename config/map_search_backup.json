@@ -1,0 +1,114 @@
+{
+  "surface_search_config" : {
+    "data_collected" : ["title","review_point","review_total","price_level",
+                      "sub_category","address","short_description","link"],
+    "data_xpath" : {
+      "title": "//div[@jsan=\"7.qBF1Pd,7.fontHeadlineSmall,t-u3p6PfXaXm4\"]/span",
+      "review_point": "//span[@jsan=\"7.ZkP5Je,0.aria-label,0.role,t-kqtGnPs-9G0\"]/span[1]",
+      "review_total": "//span[@jsan=\"7.ZkP5Je,0.aria-label,0.role,t-kqtGnPs-9G0\"]/span[2]",
+      "price_level": "//span[@role=\"img\"][@jsan=\"0.aria-label,0.role\"]",
+      "sub_category": "//div[@class=\"W4Efsd\"][@jsinstance=\"0\"]/span[1]/jsl/span[2]",
+      "address": "//div[@class=\"W4Efsd\"][@jsinstance=\"0\"]/span[2]/jsl/span[2]",
+      "short_description": "//div[@class=\"W4Efsd\"][@jsinstance=\"1\"]/span[1]/jsl/span[2]",
+      "link": "//a[@jsan=\"7.hfpxzc,0.aria-label,8.href,0.jsaction,0.jslog\"]"
+    },
+    "data_area": {
+      "title": "text",
+      "review_point": "text",
+      "review_total": "text",
+      "price_level": "text",
+      "sub_category": "text",
+      "address": "text",
+      "short_description": "text",
+      "link": "href"
+    },
+    "utility_xpath" : {
+      "zoom_out": "//button[@id=\"widget-zoom-out\"]",
+      "zoom_in": "//button[@id=\"widget-zoom-in\"]",
+      "loading_icon": "//div[@jsan=\"7.qjESne,7.veYFef\"]",
+      "search_area": "//div[@role=\"feed\"]",
+      "end_sign": "//span[@class=\"HlvSq\"]",
+      "detail_search_area": "//a[@class=\"hfpxzc\"]"
+
+    }
+  },
+  "deep_search_config": {
+    "data_collection": {
+      "title":  {},
+      "review_point": {},
+      "review_total": {},
+      "price_level": {
+
+      },
+      "sub_category": {},
+      "address": {},
+      "site": {},
+      "contact_number": {},
+      "open_hours": {
+        "need_to_click": false,
+        "alternative": {
+          "xpath": "//div[@jsan=\"t-Y_gmqpSdiUU,7.OqCZI,7.fontBodyMedium,7.WVXvdc,0.jslog\"]/div[2]",
+          "type": "aria-label"
+        }
+      },
+      "check_in": {},
+      "check_out": {},
+      "metadata": {
+        "need_to_click": true,
+        "alternative": {
+          "x_path": "//div[@role=\"region\"][@class=\"y0K5Df\"]//div[@jsan=\"t-1S0zc0ZApnU,7.PYvSYb,0.jslog,t-zvBBh-k3a_E\"]/span",
+          "type": "text"
+        }
+      },
+      "images": {
+        "need_to_click": true
+      }
+    },
+    "data_area": {
+      "title": "text",
+      "review_point": "text",
+      "review_total": "text",
+      "price_level": "text",
+      "sub_category": "text",
+      "address": "aria-label",
+      "short_description": "text",
+      "site": "href",
+      "contact_number": "data-item-id",
+      "metadata": "",
+      "open_hours": "aria-label",
+      "check_in": "text",
+      "check_out": "text",
+      "images": ""
+    },
+    "data_xpath": {
+      "title": "//h1[@jsan=\"7.DUwDvf,7.fontHeadlineLarge\"]/span[1]",
+      "review_point": "//div[@jsaction=\"pane.rating.moreReviews\"]/span[1]//span[@aria-hidden=\"true\"]",
+      "review_total": "//button[@jsaction=\"pane.rating.moreReviews\"]",
+      "price_level": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//span[@jsan=\"0.aria-label\"]",
+      "sub_category": "//button[@jsaction=\"pane.rating.category\"]",
+      "address": "//*[contains(@data-item-id, \"address\")]",
+      "metadata": "//button[@jsaction=\"pane.attributes.expand;ptrdown:ripple.play;mousedown:ripple.play;keydown:ripple.play\"]",
+      "open_hours": "//div[@jsan=\"t-Y_gmqpSdiUU,7.OqCZI,7.fontBodyMedium,7.WVXvdc,0.jslog\"]/div[@class=\"t39EBf GUrTXd\"]",
+      "site": "//*[@data-item-id=\"authority\"]",
+      "contact_number": "//*[contains(@data-item-id,\"phone\")]",
+      "check_in": "//div[@data-item-id=\"place-info-links:\"]//div[@jsan=\"7.Io6YTe,7.fontBodyMedium\"]/span[1]",
+      "check_out": "//div[@data-item-id=\"place-info-links:\"]//div[@jsan=\"7.Io6YTe,7.fontBodyMedium\"]/span[2]",
+      "images": "//h2[@jsan=\"7.kPvgOb,7.fontHeadlineSmall\"]"
+    },
+    "image_collection": {
+      "banned_category": ["Street View & 360°", "Semua", "All"],
+      "scroll_area": "//div[@class=\"m6QErb DxyBCb kA9KIf dS8AEf\"]",
+      "parent": "//div[@jsan=\"7.cRLbXd,5.min-height\"]/div[@jsan=\"7.dryRY\"]/button",
+      "child": "//div[@role=\"img\"]/parent::a",
+      "child_img": "//div[@role=\"img\"]/div",
+      "collection": "style",
+      "parent_collection": "",
+      "opening_path": "//div[@role=\"region\"]//button[@jsaction=\"pane.carousel.photo;\"][@data-carousel-index=\"0\"]",
+      "tab_image": "//div[@role=\"tablist\"]",
+      "profile": "//button[@jsan=\"7.aoRNLd,7.kn2E5e,7.NMjTrf,7.lvtCsd,0.aria-label,0.jslog,22.jsaction\"]/img",
+      "frame": "//iframe[@class=\"widget-scene-imagery-iframe\"]",
+      "img_on_frame" : "//img",
+      "video_on_frame": "//video"
+    }
+  }
+}

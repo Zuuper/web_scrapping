@@ -1,5 +1,6 @@
 import time
 
+import pandas as pd
 from geopy import Nominatim
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -28,7 +29,7 @@ def process_single_value(driver: WebDriver, attr, x_path):
         return ''
 
 
-def find_value_of_element(element: WebElement, attr, x_path, element_position=0):
+def find_value_of_element(element: WebDriver, attr, x_path, element_position=0):
     try:
         return element.find_element(By.XPATH, x_path).text if attr == "text" else \
             element.find_element(By.XPATH,
@@ -233,3 +234,36 @@ def generate_folder(file_location, file_name='', is_parent_folder=True):
         if not folder_avail_child:
             os.makedirs(new_file_location)
 
+
+def setup_bag_of_search_word():
+    validation = False
+    while not validation:
+        try:
+            input_bag = input("set your bag of search word (support multiple value, seperate keywords by ',' \n")
+            bag = str(input_bag).split(",")
+            print(bag)
+            pre_validation = input('wanna change bag of search words ? (click enter to ignore)')
+            validation = True if not pre_validation else False
+        except Exception as e:
+            print(e)
+            continue
+    return bag
+
+
+def setup_location():
+    df = pd.read_csv(r'villages_in_indonesia_with_longitude_latitude.csv')
+    validation = False
+    while not validation:
+        try:
+            input_location = str(input("set your location of search "))
+            regency = df.loc[df['name_province'] == input_location.upper()]
+            regency = regency['name_regency'].drop_duplicates()
+            print(regency)
+            pre_validation = input('wanna change of of location ? (click enter to ignore)')
+            validation = True if not pre_validation else False
+
+        except Exception as e:
+            print(e)
+            continue
+
+    return regency.to_list(), input_location

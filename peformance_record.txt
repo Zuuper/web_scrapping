@@ -15,3 +15,8 @@ conclusion :
 
 3. beberapa code dapat dioptimasi penggunaannya (ini penting)
 
+
+13 : 42
+
+
+
