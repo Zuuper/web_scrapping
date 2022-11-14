@@ -79,7 +79,7 @@ class MapsDataCollection:
         element.click()
 
     def search_on_map(self, query, position):
-        print("--- Start Web Crawler Engine --- ")
+        # print("--- Start Web Crawler Engine --- ")
         self.query = query
         query = query.replace(" ", '+')
         position = self.position if self.position else position
@@ -89,7 +89,7 @@ class MapsDataCollection:
                 self.driver.get(new_url)
         except Exception as e:
             raise ValueError('position should include lat and lon')
-        print("--- Web Crawler Engine Ready to use --- ")
+        # print("--- Web Crawler Engine Ready to use --- ")
 
     def location_search(self, vertical_coordinate=1000000, max_iteration=1,
                         type_search='surface', location_detail=""):
@@ -112,7 +112,7 @@ class MapsDataCollection:
         start_scrapping = False
         is_last_time_loading = False
         try:
-            print('Start scraping data...')
+            # print('Start scraping data...')
             # self.driver.find_element(By.XPATH, zoom_out).click()
             while not start_scrapping:
                 try:
@@ -129,11 +129,11 @@ class MapsDataCollection:
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
 
                     if is_loading and is_last_time_loading:
-                        print('loading')
+                        # print('loading')
                         if is_last_time_loading:
                             if loading_count <= max_loading_count:
                                 if wait_loading_count == max_wait_loading_count:
-                                    print("zoom out")
+                                    # print("zoom out")
                                     self.driver.find_element(By.XPATH, zoom_out).click()
                                     wait_loading_count = 0
                                     check_loading_count = True if loading_count < int(max_loading_count / 2) else False
@@ -182,7 +182,7 @@ class MapsDataCollection:
         # jobs = []
         job_queue = Queue()
         elements = self.premature_data
-        print(f"we got at least {len(elements)} of data you searching for")
+        # print(f"we got at least {len(elements)} of data you searching for")
         split_element = np.array_split(elements, self.total_cpu)
         if collecting_type == "surface" or collecting_type == "deep":
             final_data = self.surface_search(elements, location_detail) if collecting_type == 'surface' \
@@ -202,7 +202,7 @@ class MapsDataCollection:
         # while not job_queue.empty():
         #     final_data.append(job_queue.get())
 
-        print("Finish collecting data, now export data...")
+        # print("Finish collecting data, now export data...")
         # return final_data
 
     def surface_search(self, elements, location_detail=""):
@@ -269,15 +269,15 @@ class MapsDataCollection:
                                         result = res_split[1]
                                         break
                             if key == "check_in" or key == "check_out":
-                                # temp = result.replace("time", "  ")
+                                temp = result.replace("time", "  ")
                                 # temp_list = temp.split("  ")
-                                print(f"check in or check out: {result}")
+                                # print(f"check in or check out: {result}")
                                 # result = temp_list[1]
                                 # result = result.replace(" : ", "")
                             if key == "address":
                                 result = result.replace("Address: ", "")
-                            print(f"{key}: {result}")
-                    print(f"{key} : {result}")
+                            # print(f"{key}: {result}")
+                    # print(f"{key} : {result}")
                     data[key] = result
                 except Exception as e:
                     print(f"error {key} not found")
@@ -307,9 +307,98 @@ class MapsDataCollection:
                         data['regency'] = temp_reg
             except Exception as e:
                 print(e)
+                continue
             final_data.append(data)
             queue_.put(data)
         return final_data
+
+    def individual_deep_search(self, element):
+        final_data = []
+        el = element
+        self.driver.get(el['link'])
+        config = self.config['deep_search_config']
+        data = {}
+
+        for key, value in config['data_collection'].items():
+            x_path = config['data_xpath'][key]
+            attr = config['data_area'][key]
+            avail_element = check_element(self.driver, x_path)
+            try:
+                if not avail_element and value['alternative']:
+                    alternative = value['alternative']
+                    new_xpath = alternative['x_path']
+                    new_attr = alternative['type']
+                    result = find_value_of_element(self.driver, new_attr, new_xpath)
+                else:
+                    if value and value['need_to_click']:
+                        print(f"finding {key}")
+                        if key != "images" and key != 'amenities':
+                            self.driver.find_element(By.XPATH, x_path).click()
+
+                        result = self.metadata_collections() if key == "metadata" \
+                            else self.image_collection(el['title']) if key == "images" else \
+                            self.amenities_collection()
+                        if key == "metadata":
+                            for key_res, value_res in result.items():
+                                data[key_res] = value_res
+                        else:
+                            data[key] = result
+                        self.driver.get(el['link'])
+                        continue
+                    else:
+                        result = find_value_of_element(self.driver, attr, x_path)
+                        if key == 'contact_number':
+                            temp_res = result.split(":")
+                            result = temp_res[len(temp_res) - 1]
+                        if key == 'open_hours':
+                            result = result.replace("Hide open hours for the week", "")
+                            temp_res = result.split(";")
+                            for res in temp_res:
+                                res_split = res.split(",")
+                                if (len(res_split)) == 2:
+                                    result = res_split[1]
+                                    break
+                        if key == "check_in" or key == "check_out":
+                            result = result.replace("Check-in time:", "").replace("Check-out time:","")
+                            # temp_list = temp.split("  ")
+                            # print(f"check in or check out: {result}")
+                            # result = temp_list[1]
+                            # result = result.replace(" : ", "")
+                        if key == "address":
+                            result = result.replace("Address: ", "")
+                        # print(f"{key}: {result}")
+                # print(f"{key} : {result}")
+                data[key] = result
+            except Exception as e:
+                print(f"error {key} not found")
+                continue
+
+        curr_url = self.driver.current_url.split("/")
+        coor_not_found = True
+        while coor_not_found:
+            for url in curr_url:
+                if url.startswith("@"):
+                    url = url.replace("@", "")
+                    url_split = url.split(",")
+                    data['coordinate'] = f"{url_split[0]}, {url_split[1]}"
+                    coor_not_found = False
+                # self.driver.refresh()
+                time.sleep(1)
+                curr_url = self.driver.current_url.split("/")
+        try:
+            regency = data['address'].split(',')
+            for reg in regency:
+                has_regency = True if search("Kabupaten", reg) or search("Regency", reg) else False
+                has_city = True if search("Kota", reg) or search("City", reg) else False
+                if has_regency or has_city:
+                    temp_reg = reg.replace("Kabupaten", "").replace("Kota", "").replace("Regency", "").replace(
+                        "City",
+                        "")
+                    data['regency'] = temp_reg
+        except Exception as e:
+            print(e)
+        final_data.append(data)
+        return data
 
     def metadata_collections(self):
         prefix_xpath = '//div[@role="main"]/div[@class="m6QErb DxyBCb kA9KIf dS8AEf"]/div[@role="region"]'
@@ -338,6 +427,7 @@ class MapsDataCollection:
             result['short_description'] = short_description
         except Exception as e:
             print("short description not found")
+            pass
         return result
 
     def amenities_collection(self):
@@ -348,6 +438,23 @@ class MapsDataCollection:
             result.append(el.get_attribute('aria-label'))
         result = " | ".join(result)
         return result
+
+    def info_detail_collection(self):
+        prefix_path = '//div[@jsan="0.aria-expanded,0.aria-live,t-u_HOalkc3Fc"]/div'
+        result = []
+        try:
+            elements = self.driver.find_elements(By.XPATH, prefix_path)
+            for el in elements:
+                result.append(el.text)
+            result = " ".join(result)
+        except:
+            result = ""
+            pass
+        return result
+
+    def more_detail_about_collection(self):
+        result = {}
+
 
     def image_collection(self, title_name):
         print("getting images")
@@ -415,6 +522,7 @@ class MapsDataCollection:
                                         img_iteration += 1
                                     except Exception as e:
                                         print(e)
+                                        pass
                                     switch_to_frame = True
                                 except Exception as e:
                                     print(e)
@@ -466,11 +574,12 @@ class MapsDataCollection:
                                             try:
                                                 urllib.request.urlretrieve(url,
                                                                            f"{file_location}/{add_ons_path}{title_name}_{name[4]}.{format_}")
+                                                img_iteration += 1
+                                                print('sucessfully download images')
+                                                break
                                             except Exception as e:
                                                 print(e)
                                                 continue
-                                            img_iteration += 1
-                                            print('sucessfully download images')
                                         except Exception as e:
                                             print(e)
                                             continue
@@ -483,6 +592,7 @@ class MapsDataCollection:
                                 break
                     except Exception as e:
                         print(e)
-
+                        continue
         except Exception as e:
             print(e)
+            pass
