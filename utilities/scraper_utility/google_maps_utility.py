@@ -155,7 +155,7 @@ class MapsDataCollection:
                     continue
             # print('finish pre-collecting data, now collecting data')
             for element in list_result:
-                if len(self.premature_data) <= 2:
+                if len(self.premature_data) <= 1000:
                     self.premature_data.append({
                         'title': element.get_attribute('aria-label'),
                         'link': element.get_attribute('href')
@@ -349,7 +349,7 @@ class MapsDataCollection:
                         result = find_value_of_element(self.driver, attr, x_path)
                         if key == 'contact_number':
                             temp_res = result.split(":")
-                            result = temp_res[len(temp_res) - 1]
+                            result = str(temp_res[len(temp_res) - 1])
                         if key == 'open_hours':
                             result = result.replace("Hide open hours for the week", "")
                             temp_res = result.split(";")
@@ -358,8 +358,8 @@ class MapsDataCollection:
                                 if (len(res_split)) == 2:
                                     result = res_split[1]
                                     break
-                        if key == "check_in" or key == "check_out":
-                            result = result.replace("Check-in time:", "").replace("Check-out time:","")
+                        # if key == "check_in" or key == "check_out":
+                        #     result = result.replace("Check-in time:", "").replace("Check-out time:","")
                             # temp_list = temp.split("  ")
                             # print(f"check in or check out: {result}")
                             # result = temp_list[1]
@@ -397,6 +397,7 @@ class MapsDataCollection:
                     data['regency'] = temp_reg
         except Exception as e:
             print(e)
+        data['link'] = el['link']
         final_data.append(data)
         return data
 
@@ -454,7 +455,7 @@ class MapsDataCollection:
 
     def more_detail_about_collection(self):
         result = {}
-
+        data = self.driver
 
     def image_collection(self, title_name):
         print("getting images")
@@ -471,6 +472,7 @@ class MapsDataCollection:
         # collection_names = [{el.get_attribute('aria-label'): el.get_attribute('data-carousel-index')} for el in
         #                     elements]
         file_location = os.path.join(self.abs_path, f"image_gallery/{title_name}")
+        print(file_location)
         utilities.utils.generate_folder(file_location)
         try:
             profile_url = self.driver.find_element(By.XPATH, image_config['profile'])

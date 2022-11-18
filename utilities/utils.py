@@ -1,3 +1,4 @@
+import datetime
 import time
 
 import pandas as pd
@@ -239,7 +240,7 @@ def setup_bag_of_search_word():
     validation = False
     while not validation:
         try:
-            input_bag = input("set your bag of search word (support multiple value, seperate keywords by ',' \n")
+            input_bag = input("set your bag of search word (support multiple value, separate keywords by ',' \n")
             bag = str(input_bag).split(",")
             print(bag)
             pre_validation = input('wanna change bag of search words ? (click enter to ignore)')
@@ -248,6 +249,40 @@ def setup_bag_of_search_word():
             print(e)
             continue
     return bag
+
+
+def setup_collecting_surface_data():
+    try:
+        using_surface_search = True
+        filename_ = ''
+        date_now = str(datetime.datetime.now().strftime('%d_%m_%Y'))
+        surface_folder = r'surface_scraping_result'
+        surface_dir = os.listdir(surface_folder)
+        file_with_date_today = []
+        for dir_ in surface_dir:
+            if date_now in dir_:
+                file_with_date_today.append(dir_)
+        if file_with_date_today:
+            print(f"we found {len(file_with_date_today)} result for scraping today, want to use the latest result ? ")
+            for idx in range(len(file_with_date_today)):
+                print(f"{idx + 1}. {file_with_date_today[idx]}")
+            print('0. create new scraping result')
+            validation = False
+            while not validation:
+                try:
+                    input_ = int(input("pick one of options \n"))
+                    if input_ > len(file_with_date_today) or input_ < 0:
+                        raise ValueError("wrong input, try again")
+                    else:
+                        pre_validation = input('wanna change of of location ? (click enter to ignore)')
+                        validation = True if not pre_validation else False
+                        using_surface_search = True if input_ == 0 else False
+                        filename_ = file_with_date_today[input_ - 1] if input_ > 0 else ""
+                except Exception as e:
+                    print(e)
+        return using_surface_search, filename_
+    except Exception as e:
+        print(e)
 
 
 def setup_location():

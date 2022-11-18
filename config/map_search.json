@@ -38,13 +38,13 @@
       "title":  {},
       "review_point": {},
       "review_total": {},
-      "price_level": {
-
-      },
+      "price_level": {},
       "sub_category": {},
       "address": {},
       "site": {},
       "contact_number": {},
+      "check_in": {},
+      "check_out": {},
       "open_hours": {
         "need_to_click": false,
         "alternative": {
@@ -52,8 +52,6 @@
           "type": "aria-label"
         }
       },
-      "check_in": {},
-      "check_out": {},
       "metadata": {
         "need_to_click": true,
         "alternative": {
@@ -64,10 +62,12 @@
       "amenities": {
         "need_to_click": true
       },
-      "images": {
+      "about": {
+        "need_to_click": true
+      },
+      "more_detail_about": {
         "need_to_click": true
       }
-
     },
     "data_area": {
       "title": "text",
@@ -84,7 +84,9 @@
       "check_in": "text",
       "check_out": "text",
       "images": "",
-      "amenities": ""
+      "amenities": "",
+      "about": "",
+      "more_detail_about": ""
     },
     "data_xpath": {
       "title": "//h1[@jsan=\"7.DUwDvf,7.fontHeadlineLarge\"]/span[1]",
@@ -100,7 +102,9 @@
       "check_in": "//div[@data-item-id=\"place-info-links:\"]//div[@jsan=\"7.Io6YTe,7.fontBodyMedium\"]/span[1]",
       "check_out": "//div[@data-item-id=\"place-info-links:\"]//div[@jsan=\"7.Io6YTe,7.fontBodyMedium\"]/span[2]",
       "images": "//h2[@jsan=\"7.kPvgOb,7.fontHeadlineSmall\"]",
-      "amenities": "//div[@jsan=\"t-tDXXd4VdRrI,7.zSdcRe\"]/following-sibling::div[@class=\"QoXOEc\"]/div/div"
+      "amenities": "//div[@jsan=\"t-tDXXd4VdRrI,7.zSdcRe\"]/following-sibling::div[@class=\"QoXOEc\"]//div[@role=\"img\"]",
+      "about": "//button[contains(@aria-label,\"More details\")]",
+      "more_detail_about": "//div[@jsan=\"t-dgE5uNmzjiE,7.m6QErb,7.Hk4XGb,7.QoaCgb,7.KoSBEe,7.tLjsW\"]//button[@aria-label=\"More details\"]"
     },
     "image_collection": {
       "banned_category": ["Street View & 360°", "Semua", "All"],
@@ -116,6 +120,12 @@
       "frame": "//iframe[@class=\"widget-scene-imagery-iframe\"]",
       "img_on_frame" : "//img",
       "video_on_frame": "//video"
+    },
+    "more_detail_about_collection": {
+      "price" : "//div[@jsan=\"t-_js_1V5eck0,7.s35xed,0.jslog\"]//ul/li[@class=\"OyY9Kc\"]",
+      "essensial_info": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//ul/li",
+      "amenities": "//div[@class=\"QoXOEc\"]/div//div[@role=\"img\"]",
+      "detail": "//div[@class=\"PbZDve cMxIxd\"]/p"
     }
   }
 }
