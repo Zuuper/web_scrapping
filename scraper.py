@@ -8,7 +8,8 @@ from tqdm import tqdm
 
 from utilities.scraper_utility import google_maps_utility, google_utility
 from selenium.webdriver.chrome.options import Options
-from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data
+from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data, \
+    check_word_similarities
 from hanging_threads import start_monitoring
 import os
 
@@ -60,25 +61,29 @@ def google_maps_location_collection(search_param, location, max_iteration):
     data = {}
     #   First search the surface
     for param in search_param:
-        engine = maps_collection(config_dir, options=init_options())
-        log = f"log for {location} | {param} =>"
-        print(f"{log} Started ")
-        engine.open_google_maps()
-        print(f'{log} open google maps')
-        engine.search_by_searchbar(location)
-        print(f'{log} search on google maps')
-        time.sleep(1)
-        engine.check_nearby()
-        print(f'{log} click nearby')
-        time.sleep(1)
-        engine.search_by_searchbar(param)
-        print(f'{log} search again')
-        print(f'{log} prepare...')
-        time.sleep(1)
-        premature_data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=100000)
-        # engine.driver.quit()
-        print(f"{log} finish total data: {len(premature_data)}")
-        data[param] = premature_data
+        try:
+            engine = maps_collection(config_dir, options=init_options())
+            log = f"log for {location} | {param} =>"
+            print(f"{log} Started ")
+            engine.open_google_maps()
+            print(f'{log} open google maps')
+            engine.search_by_searchbar(location)
+            print(f'{log} search on google maps')
+            time.sleep(1)
+            engine.check_nearby()
+            print(f'{log} click nearby')
+            time.sleep(1)
+            engine.search_by_searchbar(param)
+            print(f'{log} search again')
+            print(f'{log} prepare...')
+            time.sleep(1)
+            premature_data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=100000)
+            # engine.driver.quit()
+            print(f"{log} finish total data: {len(premature_data)}")
+            data[param] = premature_data
+        except Exception as e:
+            print(e)
+            continue
         engine.driver.quit()
     # queue_.put(data)
     return data
@@ -410,7 +415,10 @@ def collect_surface_data(filename, surface_save_directory):
 
 
 def collect_deep_data():
-    pass
+    """
+    1. pilih dulu data apa yang mau di deep search
+    :return:
+    """
 
 
 def collect_image_data():
@@ -418,8 +426,7 @@ def collect_image_data():
 
 
 if __name__ == '__main__':
-    # freeze_support()
-    # setup_collecting_surface_data()
     # main()
-    collect_surface_data('search_keyword.txt','surface_scraping_result')
+    collect_surface_data('search_keyword.txt', 'surface_scraping_result')
+    # collect_deep_data()
     # collect_image_of_current_data(r'surface_scraping_result/villa_15_11_2022.csv')
