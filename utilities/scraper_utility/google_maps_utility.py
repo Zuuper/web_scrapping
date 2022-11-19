@@ -114,6 +114,7 @@ class MapsDataCollection:
         try:
             # print('Start scraping data...')
             # self.driver.find_element(By.XPATH, zoom_out).click()
+            error_count = 0
             while not start_scrapping:
                 try:
                     time.sleep(2)
@@ -152,6 +153,10 @@ class MapsDataCollection:
                     num_iteration += 1
                 except Exception as e:
                     print(e)
+                    if error_count >= 10:
+                        raise Exception("limit error is reached, stop location search")
+                    time.sleep(1)
+                    error_count +=1
                     continue
             # print('finish pre-collecting data, now collecting data')
             for element in list_result:
