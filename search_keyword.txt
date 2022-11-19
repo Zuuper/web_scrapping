@@ -1,9 +1,6 @@
 villa
 hotel
-seminyak villa
 luxury villa
-bedugul villa
-denpasar villa
 balinese themes villa
 kuta villa
 sanur villa
@@ -11,15 +8,7 @@ resort bali
 rice field view villa
 luxury hotels
 luxury resorts
-kuta hotels
-seminyak hotel
-classic villas in bali
-classic hotels in bali
-resort in bali
-resort in klungkung
-resort in jembrana
-resort in buleleng
-resort in nusa penida
-resort in petitenget
-villa in nusa penida
-hotels in nusa penida
+hotels
+classic villas
+classic hotels
+resort
