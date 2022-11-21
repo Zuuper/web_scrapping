@@ -466,7 +466,7 @@ def collect_deep_data():
     """
     listdir = os.listdir('surface_result_with_group')
     for dir_name in listdir:
-        deep_scraping_filename = f"data_scraping_result/{dir_name}.xlxs"
+        deep_scraping_filename = f"data_scraping_result/{dir_name}.xlsx"
         df = pd.read_csv(f"surface_result_with_group/{dir_name}")
         completed = False
         not_complete_list = check_scraping_result(deep_scraping_filename, df)
