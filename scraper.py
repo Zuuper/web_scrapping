@@ -121,11 +121,6 @@ def google_search(search_param):
     second_prefix_xpath = ""
 
 
-def get_description_from_google(engine, param):
-    prefix_xpath = f'//*[contains(text(),{param})]/parent::div'
-    second_prefix_xpath = ""
-
-
 def google_maps_deep_search(data, queue_: Queue):
     config_dir = "config/map_search.json"
     maps_collection = google_maps_utility.MapsDataCollection
@@ -154,29 +149,6 @@ def deep_search_single_data(data, filename):
             print('success creating new csv file')
         engine.driver.quit()
     pass
-
-
-def multiprocessing_location_collection(search_param, locations, max_iteration, queue_: Queue = ""):
-    config_dir = "config/map_search.json"
-    maps_collection = google_maps_utility.MapsDataCollection
-    data = {}
-    #   First search the surface
-    for location in locations:
-        for param in search_param:
-            engine = maps_collection(config_dir, options=init_options())
-            log = f"log for {location} | {param} =>"
-            engine.open_google_maps()
-            engine.search_by_searchbar(location)
-            time.sleep(1)
-            engine.check_nearby()
-            time.sleep(1)
-            engine.search_by_searchbar(param)
-            premature_data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=100000)
-            # engine.driver.quit()
-            print(f"{log} finish total data: {len(premature_data)}")
-            data[param] = premature_data
-    # queue_.put(data)
-    return data
 
 
 def save_surface_scraping_result(filename, data, keyword):
@@ -212,7 +184,7 @@ def check_duplicates(filename):
 
 def check_surface_scarping_data(file_location):
     df = pd.read_csv(file_location)
-    df.drop_duplicates(subset=['title', 'link'])
+    df.drop_duplicates(subset='title')
     df.to_csv(file_location)
 
 
@@ -269,7 +241,6 @@ def check_excel_scraping_result(scraping_result_filename, surface_scraping_resul
         return not_complete_data.to_dict('records')
     else:
         return surface_scraping_df.to_dict('records')
-
 
 
 def collecting_image_from_google_maps(data):
@@ -458,6 +429,62 @@ def setup_surface_scraping_result_with_consistent_name():
             df.to_csv(true_filename, index=False)
 
 
+def collect_surface_and_deep_data(filename, surface_save_directory):
+    cpu = int(cpu_count() / 2)
+    used_keyword = []
+    len_keyword = 1
+    regencies, location = setup_location()
+    locations = []
+    max_iteration = 100
+    province = location
+    for regency in regencies:
+        locations.append(f"{regency} {location}".capitalize())
+    while len_keyword != 0:
+        with open(filename, 'r') as f:
+            keyword_list = f.read().splitlines()
+            keywords = check_surface_results_keyword(surface_save_directory, keyword_list)
+            print(f"keywords are : {keywords} \n\n")
+            for keyword in keywords:
+                print(f"\n\nsearching keyword for : {keyword}")
+                data = []
+                premature_data = {}
+
+                for location in locations:
+                    surface_scraping_filename = f"surface_scraping_result/{keyword}_{province}.csv"
+                    result = google_maps_location_collection([keyword], location, max_iteration)
+                    data.append(result)
+                print(f"\nFinish Collecting data for surface search")
+                for result in data:
+                    for key, val in result.items():
+                        new_df = pd.DataFrame(val)
+                        premature_data[key] = pd.concat([premature_data.get(key), new_df])
+                for data, val in premature_data.items():
+                    print(f"starting to do deep search")
+                    true_name = check_word_similarities(r"config/scraper_result_classification",keyword)
+                    true_dir = f'surface_result_with_group/{true_name}.csv'
+                    deep_scraping_filename = f"data_scraping_result/{true_name}.xlsx"
+                    not_complete_list = check_scraping_result(true_dir, val)
+                    save_surface_scraping_result(true_dir, not_complete_list, keyword)
+                    save_surface_scraping_result(surface_scraping_filename, val.to_dict('records'), keyword)
+                    completed = False
+                    while not completed:
+                        jobs = []
+                        data_split = np.array_split(not_complete_list, cpu)
+                        for ds in data_split:
+                            job = Process(target=deep_search_single_data, args=(ds, deep_scraping_filename))
+                            jobs.append(job)
+                            job.start()
+                        for job in jobs:
+                            job.join()
+                        if not_complete_list:
+                            not_complete_list = check_scraping_result(deep_scraping_filename,
+                                                                      pd.DataFrame(not_complete_list))
+                        if not not_complete_list:
+                            completed = True
+
+            len_keyword = len(check_surface_results_keyword(surface_save_directory, keyword_list))
+
+
 def collect_deep_data():
     cpu = int(cpu_count() / 2)
     """
@@ -494,7 +521,8 @@ def collect_image_data():
 if __name__ == '__main__':
     # main()
     # collect_surface_data('search_keyword.txt', 'surface_scraping_result')
+    collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
-    collect_deep_data()
+    # collect_deep_data()
     # collect_image_of_current_data(r'surface_scraping_result/villa_15_11_2022.csv')
