@@ -1,6 +1,9 @@
 import datetime
 import time
 
+import fuzzywuzzy
+from fuzzywuzzy import process
+
 import pandas as pd
 from geopy import Nominatim
 from selenium.webdriver.remote.webelement import WebElement
@@ -302,3 +305,22 @@ def setup_location():
             continue
 
     return regency.to_list(), input_location
+
+
+def check_word_similarities(config_filedir, text):
+    list_config = os.listdir(config_filedir)
+    similarity_point = {}
+    for config in list_config:
+        split_title = config.split('.')
+        title = split_title[0]
+        with open(f'{config_filedir}/{config}', 'r') as f:
+            list_word = f.readlines()
+            res = process.extract(text, list_word, limit=1)
+            similarity = 0
+            len_res = len(res)
+            for r in res:
+                similarity += r[1]
+            print(f"{title} : {round(similarity / len_res, 1)}")
+            similarity_point[title] = round(similarity / len_res, 1)
+
+    return max(similarity_point, key=similarity_point.get)

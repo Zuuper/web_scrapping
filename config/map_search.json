@@ -91,8 +91,8 @@
     "data_xpath": {
       "title": "//h1[@jsan=\"7.DUwDvf,7.fontHeadlineLarge\"]/span[1]",
       "review_point": "//div[@jsaction=\"pane.rating.moreReviews\"]/span[1]//span[@aria-hidden=\"true\"]",
-      "review_total": "//button[@jsaction=\"pane.rating.moreReviews\"]",
-      "price_level": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//span[@jsan=\"0.aria-label\"]",
+      "review_total": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//span[@jsan=\"0.aria-label\"]",
+      "price_level": "//span[contains(@aria-label,'Price:')]",
       "sub_category": "//button[@jsaction=\"pane.rating.category\"]",
       "address": "//*[contains(@data-item-id, \"address\")]",
       "metadata": "//button[@jsaction=\"pane.attributes.expand;ptrdown:ripple.play;mousedown:ripple.play;keydown:ripple.play\"]",
