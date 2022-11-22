@@ -510,7 +510,7 @@ def collect_deep_data():
     """
     listdir = os.listdir('surface_result_with_group')
     for dir_name in listdir:
-        deep_scraping_filename = f"data_scraping_result/{dir_name}.csv"
+        deep_scraping_filename = f"data_scraping_result/{dir_name}"
         df = pd.read_csv(f"surface_result_with_group/{dir_name}")
         completed = False
         not_complete_list = check_scraping_result(deep_scraping_filename, df)
@@ -538,8 +538,8 @@ def collect_image_data():
 if __name__ == '__main__':
     # main()
     # collect_surface_data('search_keyword.txt', 'surface_scraping_result')
-    collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
+    # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
-    # collect_deep_data()
+    collect_deep_data()
     # collect_image_of_current_data(r'surface_scraping_result/villa_15_11_2022.csv')
