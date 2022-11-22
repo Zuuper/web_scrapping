@@ -135,7 +135,10 @@ def deep_search_single_data(data, filename):
     for d in data:
         maps_collection = google_maps_utility.MapsDataCollection
         engine = maps_collection(config_dir, options=init_options())
-        result = engine.individual_deep_search(d)
+        try:
+            result = engine.individual_deep_search(d)
+        except Exception as e:
+            continue
         df = pd.DataFrame([result])
 
         try:

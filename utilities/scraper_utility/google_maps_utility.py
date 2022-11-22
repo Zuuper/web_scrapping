@@ -378,15 +378,19 @@ class MapsDataCollection:
         curr_url = self.driver.current_url.split("/")
         coor_not_found = True
         while coor_not_found:
-            for url in curr_url:
-                if url.startswith("@"):
-                    url = url.replace("@", "")
-                    url_split = url.split(",")
-                    data['coordinate'] = f"{url_split[0]}, {url_split[1]}"
-                    coor_not_found = False
-                # self.driver.refresh()
-                time.sleep(1)
-                curr_url = self.driver.current_url.split("/")
+            try:
+                for url in curr_url:
+                    if url.startswith("@"):
+                        url = url.replace("@", "")
+                        url_split = url.split(",")
+                        data['coordinate'] = f"{url_split[0]}, {url_split[1]}"
+                        coor_not_found = False
+                    # self.driver.refresh()
+                    time.sleep(1)
+                    curr_url = self.driver.current_url.split("/")
+            except Exception as e:
+                print(e)
+                break
         try:
             regency = data['address'].split(',')
             for reg in regency:
@@ -399,6 +403,7 @@ class MapsDataCollection:
                     data['regency'] = temp_reg
         except Exception as e:
             pass
+
         data['link'] = el['link']
         print(data)
         final_data.append(data)
