@@ -141,11 +141,12 @@ def deep_search_single_data(data, filename):
         try:
             default_df = pd.read_csv(filename)
             new_df = pd.concat([default_df, df])
-            new_df.to_excel(filename, index=False)
+            new_df.to_csv(filename, index=False)
             # df.to_csv(filename, mode="a", index=True, header=is_using_header)
             print('success adding new data to csv')
-        except:
-            df.to_excel(filename, index=False)
+        except Exception as e:
+            print(e)
+            df.to_csv(filename, index=False)
             print('success creating new csv file')
         engine.driver.quit()
     pass
@@ -185,7 +186,7 @@ def check_duplicates(filename):
 def check_surface_scarping_data(file_location):
     df = pd.read_csv(file_location)
     df.drop_duplicates(subset='title')
-    df.to_csv(file_location)
+    df.to_csv(file_location, index=False)
 
 
 def search_description_and_email_from_google(keyword):
@@ -462,26 +463,39 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
                     print(f"starting to do deep search")
                     true_name = check_word_similarities(r"config/scraper_result_classification",keyword)
                     true_dir = f'surface_result_with_group/{true_name}.csv'
-                    deep_scraping_filename = f"data_scraping_result/{true_name}.xlsx"
-                    not_complete_list = check_scraping_result(true_dir, val)
+                    deep_scraping_filename = f"data_scraping_result/{true_name}.csv"
+                    try:
+                        df_temp = pd.read_csv(deep_scraping_filename)
+                    except Exception as e:
+                        print(f'save directory is not available, creating new one')
+                        df_temp = pd.DataFrame()
+                        df_temp.to_csv(deep_scraping_filename, index=False)
+
+                    not_complete_list = check_scraping_result(deep_scraping_filename, val)
                     save_surface_scraping_result(true_dir, not_complete_list, keyword)
                     save_surface_scraping_result(surface_scraping_filename, val.to_dict('records'), keyword)
+                    print(f"total data need to collected for {keyword} => {len(not_complete_list)}")
                     completed = False
+
                     while not completed:
                         jobs = []
                         data_split = np.array_split(not_complete_list, cpu)
+
                         for ds in data_split:
                             job = Process(target=deep_search_single_data, args=(ds, deep_scraping_filename))
                             jobs.append(job)
                             job.start()
+
                         for job in jobs:
                             job.join()
+
                         if not_complete_list:
                             not_complete_list = check_scraping_result(deep_scraping_filename,
                                                                       pd.DataFrame(not_complete_list))
-                        if not not_complete_list:
-                            completed = True
 
+                        if len(not_complete_list) == 0:
+                            print(f"finish collecting all data for {keyword}")
+                            completed = True
             len_keyword = len(check_surface_results_keyword(surface_save_directory, keyword_list))
 
 
@@ -493,7 +507,7 @@ def collect_deep_data():
     """
     listdir = os.listdir('surface_result_with_group')
     for dir_name in listdir:
-        deep_scraping_filename = f"data_scraping_result/{dir_name}.xlsx"
+        deep_scraping_filename = f"data_scraping_result/{dir_name}.csv"
         df = pd.read_csv(f"surface_result_with_group/{dir_name}")
         completed = False
         not_complete_list = check_scraping_result(deep_scraping_filename, df)
