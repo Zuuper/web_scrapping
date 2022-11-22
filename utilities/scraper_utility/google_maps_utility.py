@@ -336,10 +336,8 @@ class MapsDataCollection:
                     result = find_value_of_element(self.driver, new_attr, new_xpath)
                 else:
                     if value and value['need_to_click']:
-                        print(f"finding {key}")
                         if key != "images" and key != 'amenities':
                             self.driver.find_element(By.XPATH, x_path).click()
-
                         result = self.metadata_collections() if key == "metadata" \
                             else self.image_collection(el['title']) if key == "images" else \
                             self.amenities_collection()
@@ -352,9 +350,9 @@ class MapsDataCollection:
                         continue
                     else:
                         result = find_value_of_element(self.driver, attr, x_path)
-                        if key == 'contact_number':
-                            temp_res = result.split(":")
-                            result = str(temp_res[len(temp_res) - 1])
+                        # if key == 'contact_number':
+                        #     temp_res = result.split(":")
+                        #     result = str(temp_res[len(temp_res) - 1])
                         if key == 'open_hours':
                             result = result.replace("Hide open hours for the week", "")
                             temp_res = result.split(";")
@@ -365,17 +363,16 @@ class MapsDataCollection:
                                     break
                         # if key == "check_in" or key == "check_out":
                         #     result = result.replace("Check-in time:", "").replace("Check-out time:","")
-                            # temp_list = temp.split("  ")
-                            # print(f"check in or check out: {result}")
-                            # result = temp_list[1]
-                            # result = result.replace(" : ", "")
+                        # temp_list = temp.split("  ")
+                        # print(f"check in or check out: {result}")
+                        # result = temp_list[1]
+                        # result = result.replace(" : ", "")
                         if key == "address":
                             result = result.replace("Address: ", "")
                         # print(f"{key}: {result}")
                 # print(f"{key} : {result}")
                 data[key] = result
             except Exception as e:
-                print(f"error {key} not found")
                 continue
 
         curr_url = self.driver.current_url.split("/")
@@ -401,8 +398,9 @@ class MapsDataCollection:
                         "")
                     data['regency'] = temp_reg
         except Exception as e:
-            print(e)
+            pass
         data['link'] = el['link']
+        print(data)
         final_data.append(data)
         return data
 
@@ -412,12 +410,12 @@ class MapsDataCollection:
         while len(elements) == 0:
             time.sleep(1)
             elements = self.driver.find_elements(By.XPATH, prefix_xpath)
-            print('element not found')
+            # print('element not found')
         role_list = [el.get_attribute('aria-label') for el in elements]
-        print(role_list)
+        # print(role_list)
         result = {}
         for role in role_list:
-            print(role)
+            # print(role)
             try:
                 parent_xpath = f'//div[@role="main"]//div[@role="region"][@aria-label="{role}"]'
                 child_xpath = f'{parent_xpath}/ul/li/span'
@@ -425,14 +423,14 @@ class MapsDataCollection:
                 data = [el.text for el in elements]
                 result[role] = " | ".join(data)
             except Exception as e:
-                print(e)
+                # print(e)
                 continue
         short_description_xpath = '//div[@jsan="t-1hiPW3JPYg0,7.PbZDve"]'
         try:
             short_description = self.driver.find_element(By.XPATH, short_description_xpath).text
             result['short_description'] = short_description
         except Exception as e:
-            print("short description not found")
+            # print("short description not found")
             pass
         return result
 
