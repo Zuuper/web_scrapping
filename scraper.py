@@ -289,7 +289,7 @@ def collect_image_of_current_data(scraping_result_location):
         complete_collected_images = True
 
 
-def check_surface_results_keyword(filedir, keywords: []):
+def check_surface_results_keyword(filedir, keywords: [], location = ""):
     listdir = os.listdir(filedir)
     new_listdir = []
     for dir_ in listdir:
@@ -446,13 +446,12 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
     while len_keyword != 0:
         with open(filename, 'r') as f:
             keyword_list = f.read().splitlines()
-            keywords = check_surface_results_keyword(surface_save_directory, keyword_list)
+            keywords = check_surface_results_keyword(surface_save_directory, keyword_list, location)
             print(f"keywords are : {keywords} \n\n")
             for keyword in keywords:
                 print(f"\n\nsearching keyword for : {keyword}")
                 data = []
                 premature_data = {}
-
                 for location in locations:
                     surface_scraping_filename = f"surface_scraping_result/{keyword}_{province}.csv"
                     result = google_maps_location_collection([keyword], location, max_iteration)

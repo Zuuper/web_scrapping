@@ -107,7 +107,7 @@ class MapsDataCollection:
         loading_count = 0
         wait_loading_count = 0
         max_wait_loading_count = 4
-        max_loading_count = 20
+        max_loading_count = 10
         is_zoom_out = True
         start_scrapping = False
         is_last_time_loading = False
@@ -117,6 +117,7 @@ class MapsDataCollection:
             error_count = 0
             while not start_scrapping:
                 try:
+                    print(num_iteration)
                     time.sleep(2)
                     # self.wait.until(EC.element_to_be_selected((By.XPATH, search_area)))
                     search_result = self.driver.find_element(By.XPATH, search_area)
@@ -125,17 +126,24 @@ class MapsDataCollection:
                     list_result = self.driver.find_elements(By.XPATH, list_area)
                     # start_scrapping = True if list_result > 2 else False
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
+                    print(f"first check loading status: {is_loading}")
                     if is_loading:
                         time.sleep(1)
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
-
-                    if is_loading and is_last_time_loading:
-                        # print('loading')
+                    print(f"second check loading status: {is_loading}")
+                    if is_loading:
+                        print('loading')
                         if is_last_time_loading:
                             if loading_count <= max_loading_count:
                                 if wait_loading_count == max_wait_loading_count:
-                                    # print("zoom out")
-                                    self.driver.find_element(By.XPATH, zoom_out).click()
+                                    print("zoom out")
+                                    if is_zoom_out:
+                                        self.driver.find_element(By.XPATH, zoom_out).click()
+                                        is_zoom_out = False
+                                    else:
+                                        self.driver.find_element(By.XPATH, zoom_in).click()
+                                        is_zoom_out = True
+
                                     wait_loading_count = 0
                                     check_loading_count = True if loading_count < int(max_loading_count / 2) else False
                                     is_zoom_out = True if not is_zoom_out and check_loading_count \
@@ -143,6 +151,8 @@ class MapsDataCollection:
                                     loading_count += 1
                                 elif wait_loading_count < max_wait_loading_count:
                                     wait_loading_count += 1
+                            else:
+                                start_scrapping = True
                         else:
                             is_last_time_loading = True
                     elif not is_loading:
