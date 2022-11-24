@@ -15,6 +15,7 @@ import utilities.utils
 from utilities.utils import check_element, find_value_of_element
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import urllib.request
 import socket
 
@@ -40,9 +41,8 @@ def search_on_maps(query: str, position: dict, driver: WebDriver):
 
 class MapsDataCollection:
     def __init__(self, config_dir, options, using_multiprocessor=False, total_cpu=1, max_thread=2):
-        execute_path = r'E:\project\software_development\web_scrapping\chromeDriver\chromedriver.exe'
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(),
-                                       options=options)
+        self.driver = webdriver.Edge(EdgeChromiumDriverManager().install(), capabilities={"platform": "Windows"},
+                                     options=options)
         self.driver.maximize_window()
         self.prefix_url = "https://www.google.com/maps/search/"
         self.config = json.load(open(config_dir))

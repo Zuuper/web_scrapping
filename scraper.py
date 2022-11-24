@@ -1,4 +1,5 @@
 import datetime
+import json
 import time
 import numpy as np
 import pandas as pd
@@ -7,7 +8,7 @@ from selenium.webdriver.common.by import By
 from tqdm import tqdm
 
 from utilities.scraper_utility import google_maps_utility, google_utility
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.edge.options import Options
 from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data, \
     check_word_similarities
 from hanging_threads import start_monitoring
@@ -35,12 +36,13 @@ def get_detail():
 
 def init_options():
     options = Options()
-    options.headless = True
+    data = json.load(open('config/browser_option.json'))
+    options.headless = data['headless']
     # options.add_argument("--kiosk")
-    options.add_argument("--lang=en-US")
-    options.add_argument(r"--user-data-dir=C:\Users\Asus\AppData\Local\Google\Chrome\User Data")
-    options.add_argument(r'--profile-directory=Default')
-    options.add_argument("--window-size=1336,768")
+    options.add_argument(data['lang'])
+    options.add_argument(data['user-data-dir'])
+    options.add_argument(data['profile-dir'])
+    options.add_argument(data['windows-size'])
     return options
 
 
@@ -64,22 +66,22 @@ def google_maps_location_collection(search_param, location, max_iteration):
         try:
             engine = maps_collection(config_dir, options=init_options())
             log = f"log for {location} | {param} =>"
-            print(f"{log} Started ")
+            print(f"{datetime.datetime.now()} {log} Started ")
             engine.open_google_maps()
-            print(f'{log} open google maps')
+            print(f'{datetime.datetime.now()} {log} open google maps')
             engine.search_by_searchbar(location)
-            print(f'{log} search on google maps')
+            print(f'{datetime.datetime.now()} {log} search on google maps')
             time.sleep(1)
             engine.check_nearby()
-            print(f'{log} click nearby')
+            print(f'{datetime.datetime.now()} {log} click nearby')
             time.sleep(1)
             engine.search_by_searchbar(param)
-            print(f'{log} search again')
-            print(f'{log} prepare...')
+            print(f'{datetime.datetime.now()} {log} search again')
+            print(f'{datetime.datetime.now()} {log} prepare...')
             time.sleep(1)
             premature_data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=100000)
             # engine.driver.quit()
-            print(f"{log} finish total data: {len(premature_data)}")
+            print(f"{datetime.datetime.now()} {log} finish total data: {len(premature_data)}")
             data[param] = premature_data
         except Exception as e:
             print(e)
@@ -133,36 +135,35 @@ def google_maps_deep_search(data, queue_: Queue):
 def deep_search_single_data(data, filename):
     config_dir = "config/map_search.json"
     for d in data:
-        maps_collection = google_maps_utility.MapsDataCollection
-        engine = maps_collection(config_dir, options=init_options())
         try:
-            result = engine.individual_deep_search(d)
-        except Exception as e:
-            continue
-        df = pd.DataFrame([result])
+            maps_collection = google_maps_utility.MapsDataCollection
+            engine = maps_collection(config_dir, options=init_options())
+            try:
+                result = engine.individual_deep_search(d)
+            except Exception as e:
+                continue
+            df = pd.DataFrame([result])
 
-        try:
-            default_df = pd.read_csv(filename)
-            new_df = pd.concat([default_df, df])
-            new_df.to_csv(filename, index=False)
-            # df.to_csv(filename, mode="a", index=True, header=is_using_header)
-            print('success adding new data to csv')
+            try:
+                default_df = pd.read_csv(filename)
+                new_df = pd.concat([default_df, df])
+                new_df.to_csv(filename, index=False)
+                # df.to_csv(filename, mode="a", index=True, header=is_using_header)
+                print(f'{datetime.datetime.now()} success adding new data to csv')
+            except Exception as e:
+                print(e)
+                df.to_csv(filename, index=False)
+                print(f'{datetime.datetime.now()} success creating new csv file')
+            engine.driver.quit()
         except Exception as e:
-            print(e)
-            df.to_csv(filename, index=False)
-            print('success creating new csv file')
-        engine.driver.quit()
+            print(f"{datetime.datetime.now()} error : {e}")
+            continue
     pass
 
 
 def save_surface_scraping_result(filename, data, keyword):
     data = pd.DataFrame(data)
     data = data.drop_duplicates()
-    # desc
-    # 0 = no data available |
-    # 1 = some data collected, but the primary data (like title) is missing |
-    # 2 = text data collected, but no images is collected
-    # 3 = all data collected
     try:
         default_df = pd.read_csv(filename)
         new_df = pd.concat([default_df, data])
@@ -170,12 +171,12 @@ def save_surface_scraping_result(filename, data, keyword):
         res['keyword'] = keyword
         res.to_csv(filename, index=False)
         # df.to_csv(filename, mode="a", index=True, header=is_using_header)
-        print('success adding new data to csv')
+        print(f'{datetime.datetime.now()} success adding new data to csv')
     except Exception as e:
         print(e)
         data['keyword'] = keyword
         data.to_csv(filename, index=False)
-        print('success creating new csv file')
+        print(f'{datetime.datetime.now()} success creating new csv file')
 
 
 def check_duplicates(filename):
@@ -547,8 +548,8 @@ def collect_image_data():
 
 if __name__ == '__main__':
     # main()
-    collect_surface_data('search_keyword.txt', 'surface_scraping_result')
-    # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
+    # collect_surface_data('search_keyword.txt', 'surface_scraping_result')
+    collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
     # collect_deep_data()
