@@ -1,3 +1,13 @@
 restaurant
 rumah makan
 fast food
+restaurant
+cafe
+italian restaurant
+chinese restaurant
+japanese restaurant
+indonesian restaurant
+western restaurant
+indian restaurant
+french restaurant
+korean restaurant

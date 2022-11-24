@@ -106,7 +106,7 @@ class MapsDataCollection:
         num_iteration = 0
         loading_count = 0
         wait_loading_count = 0
-        max_wait_loading_count = 4
+        max_wait_loading_count = 2
         max_loading_count = 10
         is_zoom_out = True
         start_scrapping = False
@@ -136,7 +136,7 @@ class MapsDataCollection:
                         if is_last_time_loading:
                             if loading_count <= max_loading_count:
                                 if wait_loading_count == max_wait_loading_count:
-                                    print("zoom out")
+                                    print("zoom out", loading_count)
                                     if is_zoom_out:
                                         self.driver.find_element(By.XPATH, zoom_out).click()
                                         is_zoom_out = False
@@ -166,7 +166,7 @@ class MapsDataCollection:
                     if error_count >= 10:
                         raise Exception("limit error is reached, stop location search")
                     time.sleep(1)
-                    error_count +=1
+                    error_count += 1
                     continue
             # print('finish pre-collecting data, now collecting data')
             for element in list_result:
