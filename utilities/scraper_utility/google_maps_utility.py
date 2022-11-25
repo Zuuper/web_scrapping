@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import sys
@@ -83,16 +84,19 @@ class MapsDataCollection:
         self.query = query
         query = query.replace(" ", '+')
         position = self.position if self.position else position
+
         try:
             if 'lat' in position and 'lon' in position:
                 new_url = f'{self.prefix_url}{query}/@{position["lat"]},{position["lon"]},15z'
                 self.driver.get(new_url)
+
         except Exception as e:
             raise ValueError('position should include lat and lon')
         # print("--- Web Crawler Engine Ready to use --- ")
 
     def location_search(self, vertical_coordinate=1000000, max_iteration=1,
                         type_search='surface', location_detail=""):
+
         self.premature_data = []
         utility_config = self.config['surface_search_config']['utility_xpath']
         search_area = utility_config['search_area']
@@ -107,18 +111,18 @@ class MapsDataCollection:
         loading_count = 0
         wait_loading_count = 0
         max_wait_loading_count = 2
-        max_loading_count = 10
+        max_loading_count = 5
         is_zoom_out = True
         start_scrapping = False
         is_last_time_loading = False
+
         try:
             # print('Start scraping data...')
             # self.driver.find_element(By.XPATH, zoom_out).click()
             error_count = 0
             while not start_scrapping:
                 try:
-                    print(num_iteration)
-                    time.sleep(2)
+                    time.sleep(1)
                     # self.wait.until(EC.element_to_be_selected((By.XPATH, search_area)))
                     search_result = self.driver.find_element(By.XPATH, search_area)
                     self.driver.execute_script("arguments[0].scrollTop = arguments[1]", search_result,
@@ -126,17 +130,17 @@ class MapsDataCollection:
                     list_result = self.driver.find_elements(By.XPATH, list_area)
                     # start_scrapping = True if list_result > 2 else False
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
-                    print(f"first check loading status: {is_loading}")
+                    # print(f"first check loading status: {is_loading}")
                     if is_loading:
                         time.sleep(1)
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
-                    print(f"second check loading status: {is_loading}")
+                    # print(f"second check loading status: {is_loading}")
                     if is_loading:
-                        print('loading')
+                        # print('loading')
                         if is_last_time_loading:
                             if loading_count <= max_loading_count:
                                 if wait_loading_count == max_wait_loading_count:
-                                    print("zoom out", loading_count)
+                                    # print("zoom out", loading_count)
                                     if is_zoom_out:
                                         self.driver.find_element(By.XPATH, zoom_out).click()
                                         is_zoom_out = False
@@ -162,7 +166,7 @@ class MapsDataCollection:
                                                                                               end_sign) else False
                     num_iteration += 1
                 except Exception as e:
-                    print(e)
+                    print(f"{datetime.datetime.now} {e}")
                     if error_count >= 10:
                         raise Exception("limit error is reached, stop location search")
                     time.sleep(1)
@@ -182,11 +186,14 @@ class MapsDataCollection:
             raise ValueError(e)
 
     def setup_jobs(self, jobs, split_list, type_search, data_result):
+
         for list_ in split_list:
-            job = threading.Thread(target=self.collecting_data(type_search, list_), args=[])
+            job = threading.Thread(target=self.collecting_data, args=(type_search, list_))
             jobs.append(job)
+
         for job in jobs:
             job.start()
+
         for job in jobs:
             job.join()
 

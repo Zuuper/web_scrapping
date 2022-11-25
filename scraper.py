@@ -1,18 +1,18 @@
 import datetime
 import json
+import os
 import time
+from multiprocessing import Queue, cpu_count, Process
+
 import numpy as np
 import pandas as pd
-from multiprocessing import Queue, cpu_count, Process, pool, Manager, freeze_support
+from hanging_threads import start_monitoring
 from selenium.webdriver.common.by import By
-from tqdm import tqdm
+from selenium.webdriver.edge.options import Options
 
 from utilities.scraper_utility import google_maps_utility, google_utility
-from selenium.webdriver.edge.options import Options
 from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data, \
     check_word_similarities
-from hanging_threads import start_monitoring
-import os
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -209,7 +209,7 @@ def check_scraping_result(scraping_result_filename, surface_scraping_result):
     try:
         scraping_df = pd.read_csv(scraping_result_filename)
         avail_scraping_df = True
-    except:
+    except :
         scraping_df = None
 
     if type(surface_scraping_result) == str:
@@ -515,7 +515,7 @@ def collect_deep_data(surface_result_file_location=None):
         job_data = job_data
         while not completed:
             jobs = []
-            data_split = np.array_split(not_complete_list, cpu)
+            data_split = np.array_split(job_data, cpu)
             for ds in data_split:
                 job = Process(target=deep_search_single_data, args=(ds, deep_scraping_filename))
                 jobs.append(job)
@@ -524,7 +524,7 @@ def collect_deep_data(surface_result_file_location=None):
                 job.join()
             if not_complete_list:
                 job_data = check_scraping_result(deep_scraping_filename, pd.DataFrame(not_complete_list))
-            if not not_complete_list:
+            if not job_data:
                 completed = True
 
     if surface_result_file_location:
