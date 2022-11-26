@@ -482,7 +482,7 @@ class MapsDataCollection:
         result = {}
         data = self.driver
 
-    def image_collection(self, title_name):
+    def image_collection(self, title_name, file_path = ""):
         print("getting images")
         image_config = self.config['deep_search_config']['image_collection']
         parent_xpath = image_config['parent']
@@ -496,7 +496,10 @@ class MapsDataCollection:
         collection_values = [el.get_attribute('data-carousel-index') for el in elements]
         # collection_names = [{el.get_attribute('aria-label'): el.get_attribute('data-carousel-index')} for el in
         #                     elements]
-        file_location = os.path.join(self.abs_path, f"image_gallery/{title_name}")
+        if file_path:
+            file_location = os.path.join(self.abs_path, f"image_gallery/{title_name}")
+        else:
+            file_location = file_path
         print(file_location)
         utilities.utils.generate_folder(file_location)
         try:

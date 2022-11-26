@@ -254,7 +254,7 @@ def collecting_image_from_google_maps(data):
         maps_collection = google_maps_utility.MapsDataCollection
         engine = maps_collection(config_dir, options=init_options())
         engine.driver.get(d['link'])
-        engine.image_collection(d['title'])
+        engine.image_collection(d['title'], f'image_gallery/{d["title"]}')
         engine.driver.quit()
 
 
@@ -274,7 +274,7 @@ def check_collecting_images_result(surface_scraping_result):
 
 def collect_image_of_current_data(scraping_result_location):
     df = pd.read_csv(scraping_result_location)
-    new_df = df.head(20).to_dict('records')
+    new_df = df.to_dict('records')
     complete_collected_images = False
     not_complete_list = new_df
     while not complete_collected_images:
