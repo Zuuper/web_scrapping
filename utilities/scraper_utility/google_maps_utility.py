@@ -497,9 +497,10 @@ class MapsDataCollection:
         # collection_names = [{el.get_attribute('aria-label'): el.get_attribute('data-carousel-index')} for el in
         #                     elements]
         if file_path:
-            file_location = os.path.join(self.abs_path, f"image_gallery/{title_name}")
-        else:
             file_location = file_path
+        else:
+            file_location = os.path.join(self.abs_path, f"image_gallery/{title_name}")
+
         print(file_location)
         utilities.utils.generate_folder(file_location)
         try:
