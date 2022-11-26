@@ -273,13 +273,13 @@ def check_collecting_images_result(surface_scraping_result):
 
 
 def collect_image_of_current_data(scraping_result_location):
+    cpu = int(cpu_count() / 2)
     df = pd.read_csv(scraping_result_location)
-    new_df = df.to_dict('records')
     complete_collected_images = False
-    not_complete_list = new_df
+    not_complete_list = check_collecting_images_result(pd.DataFrame(df))
     while not complete_collected_images:
         jobs = []
-        data_split = np.array_split(not_complete_list, 4)
+        data_split = np.array_split(not_complete_list, cpu)
         for ds in data_split:
             job = Process(target=collecting_image_from_google_maps, args=(ds,))
             jobs.append(job)
@@ -287,10 +287,11 @@ def collect_image_of_current_data(scraping_result_location):
 
         for job in jobs:
             job.join()
+        not_complete_list = check_collecting_images_result(df)
         complete_collected_images = True
 
 
-def check_surface_results_keyword(filedir, keywords: [], location = ""):
+def check_surface_results_keyword(filedir, keywords: [], location=""):
     listdir = os.listdir(filedir)
     new_listdir = []
     for dir_ in listdir:
@@ -360,8 +361,8 @@ def main():
             if not not_complete_list:
                 completed = True
         check_duplicates(deep_scraping_filename)
-        complete_collected_images = False
 
+        complete_collected_images = False
         not_complete_list = check_collecting_images_result(pd.DataFrame(data_listing))
         while not complete_collected_images:
             jobs = []
