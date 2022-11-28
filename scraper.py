@@ -279,6 +279,7 @@ def collect_image_of_current_data(scraping_result_location):
     cpu = int(cpu_count() / 2)
     df = pd.read_csv(scraping_result_location)
     complete_collected_images = False
+    df['title'] = df['title'].str.replace(r'[^\w\s]+', '')
     not_complete_list = check_collecting_images_result(pd.DataFrame(df))
     while not complete_collected_images:
         jobs = []
