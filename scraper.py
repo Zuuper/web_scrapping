@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import re
 import time
 from multiprocessing import Queue, cpu_count, Process
 
@@ -168,6 +169,7 @@ def save_surface_scraping_result(filename, data, keyword):
         default_df = pd.read_csv(filename)
         new_df = pd.concat([default_df, data])
         res = new_df.drop_duplicates(keep="last", subset=['title'])
+        res['title'] = res['title'].str.replace(r'[^\w\s]+', '', regex=True)
         res['keyword'] = keyword
         res.to_csv(filename, index=False)
         # df.to_csv(filename, mode="a", index=True, header=is_using_header)
@@ -175,6 +177,7 @@ def save_surface_scraping_result(filename, data, keyword):
     except Exception as e:
         print(e)
         data['keyword'] = keyword
+        data['title'] = data['title'].str.replace(r'[^\w\s]+', '', regex=True)
         data.to_csv(filename, index=False)
         print(f'{datetime.datetime.now()} success creating new csv file')
 
@@ -431,7 +434,7 @@ def setup_surface_scraping_result_with_consistent_name():
             save_surface_scraping_result(true_filename, df, '')
         except:
             df = df.drop_duplicates(subset='title', keep="last")
-            print(len(df))
+            df['title'] = df['title'].str.replace(r'[^\w\s]+', '')
             df.to_csv(true_filename, index=False)
 
 
@@ -550,8 +553,8 @@ def collect_image_data():
 if __name__ == '__main__':
     # main()
     # collect_surface_data('search_keyword.txt', 'surface_scraping_result')
-    collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
-    # setup_surface_scraping_result_with_consistent_name()
+    # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
+    setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
     # collect_deep_data()
     # collect_image_of_current_data(r'surface_scraping_result/villa_15_11_2022.csv')
