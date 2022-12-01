@@ -212,7 +212,7 @@ def check_scraping_result(scraping_result_filename, surface_scraping_result):
     try:
         scraping_df = pd.read_csv(scraping_result_filename)
         avail_scraping_df = True
-    except :
+    except:
         scraping_df = None
 
     if type(surface_scraping_result) == str:
@@ -413,7 +413,7 @@ def collect_surface_data(filename, surface_save_directory):
             keyword_list = f.read().splitlines()
             keywords = check_surface_results_keyword(surface_save_directory, keyword_list, regencies)
             print(f"keywords are : {keywords} \n\n")
-            if len(keywords) == 0 :
+            if len(keywords) == 0:
                 break
             for keyword in keywords:
                 print(f"\n\nsearching keyword for : {keyword}")
@@ -481,7 +481,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
                     premature_data[key] = pd.concat([premature_data.get(key), new_df])
             for data, val in premature_data.items():
                 print(f"starting to do deep search")
-                true_name = check_word_similarities(r"config/scraper_result_classification",keyword)
+                true_name = check_word_similarities(r"config/scraper_result_classification", keyword)
                 true_dir = f'surface_result_with_group/{true_name}.csv'
                 deep_scraping_filename = f"data_scraping_result/{true_name}.csv"
                 try:
@@ -510,13 +510,12 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
                     for job in jobs:
                         job.join()
 
-                    if not_complete_list:
-                        not_complete_list = check_scraping_result(deep_scraping_filename,
+                    not_complete_list = check_scraping_result(deep_scraping_filename,
                                                                   pd.DataFrame(not_complete_list))
-
                     if len(not_complete_list) == 0:
                         print(f"finish collecting all data for {keyword}")
                         completed = True
+
 
 def collect_deep_data(surface_result_file_location=None):
     cpu = int(cpu_count() / 2)
