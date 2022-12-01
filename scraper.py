@@ -465,7 +465,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
     with open(filename, 'r') as f:
         keyword_list = f.read().splitlines()
         keywords = check_surface_results_keyword(surface_save_directory, keyword_list, location)
-        print(f"keywords are : {keywords} \n\n")
+        print(f"keywords are: {keywords} \n\n")
         for keyword in keywords:
             print(f"\n\nsearching keyword for : {keyword}")
             data = []
@@ -511,7 +511,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
                         job.join()
 
                     not_complete_list = check_scraping_result(deep_scraping_filename,
-                                                                  pd.DataFrame(not_complete_list))
+                                                              pd.DataFrame(not_complete_list))
                     if len(not_complete_list) == 0:
                         print(f"finish collecting all data for {keyword}")
                         completed = True
