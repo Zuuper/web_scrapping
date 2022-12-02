@@ -283,18 +283,18 @@ def collect_image_of_current_data(scraping_result_location):
     complete_collected_images = False
     df['title'] = df['title'].str.replace(r'[^\w\s]+', '', regex=True)
     not_complete_list = check_collecting_images_result(pd.DataFrame(df))
-    while not complete_collected_images:
-        jobs = []
-        data_split = np.array_split(not_complete_list, cpu)
-        for ds in data_split:
-            job = Process(target=collecting_image_from_google_maps, args=(ds,))
-            jobs.append(job)
-            job.start()
+    jobs = []
+    data_split = np.array_split(not_complete_list, cpu)
+    for ds in data_split:
+        job = Process(target=collecting_image_from_google_maps, args=(ds,))
+        jobs.append(job)
+        job.start()
 
-        for job in jobs:
-            job.join()
-        not_complete_list = check_collecting_images_result(df)
-        complete_collected_images = True
+    for job in jobs:
+        job.join()
+    not_complete_list = check_collecting_images_result(df)
+    complete_collected_images = True
+    print(f"{datetime.datetime.now()} finish all image collection")
 
 
 def check_surface_results_keyword(filedir, keywords: [], location=""):
