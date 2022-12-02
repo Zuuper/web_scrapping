@@ -528,19 +528,18 @@ def collect_deep_data(surface_result_file_location=None):
     def jobs_process(job_data):
         completed = False
         job_data = job_data
-        while not completed:
-            jobs = []
-            data_split = np.array_split(job_data, cpu)
-            for ds in data_split:
-                job = Process(target=deep_search_single_data, args=(ds, deep_scraping_filename))
-                jobs.append(job)
-                job.start()
-            for job in jobs:
-                job.join()
-            if not_complete_list:
-                job_data = check_scraping_result(deep_scraping_filename, pd.DataFrame(not_complete_list))
-            if not job_data:
-                completed = True
+        jobs = []
+        data_split = np.array_split(job_data, cpu)
+        for ds in data_split:
+            job = Process(target=deep_search_single_data, args=(ds, deep_scraping_filename))
+            jobs.append(job)
+            job.start()
+        for job in jobs:
+            job.join()
+
+        job_data = check_scraping_result(deep_scraping_filename, pd.DataFrame(not_complete_list))
+        if not job_data:
+            completed = True
 
     if surface_result_file_location:
         file_location = surface_result_file_location.split('/')
