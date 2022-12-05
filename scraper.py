@@ -564,4 +564,3 @@ if __name__ == '__main__':
     # check_duplicates('surface_result_with_group/villa.csv')
     # collect_deep_data('activity.csv')
     collect_image_of_current_data(r'surface_result_with_group/activity.csv')
-    # collect_image_folder_name()
