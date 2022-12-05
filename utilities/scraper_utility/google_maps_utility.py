@@ -339,8 +339,7 @@ class MapsDataCollection:
         el = element
         self.driver.get(el['link'])
         config = self.config['deep_search_config']
-        data = {}
-
+        data = {'title': el['title']}
         for key, value in config['data_collection'].items():
             x_path = config['data_xpath'][key]
             attr = config['data_area'][key]
@@ -527,7 +526,7 @@ class MapsDataCollection:
                     while not elements and num_iteration <= max_iteration:
                         elements = self.driver.find_elements(By.XPATH, child_xpath)
                         time.sleep(1)
-                        print("sleeping to get images...")
+                        # print("sleeping to get images...")
                         num_iteration += 1
                     try:
                         img_iteration = 0
@@ -539,7 +538,7 @@ class MapsDataCollection:
                             if key == "Videos":
                                 video_url_xpath = image_config['video_on_frame']
                                 try:
-                                    print("open frame")
+                                    # print("open frame")
                                     iframe_xpath = image_config['frame']
                                     WebDriverWait(self.driver, 20). \
                                         until(EC.frame_to_be_available_and_switch_to_it((By.XPATH, iframe_xpath)))
@@ -549,15 +548,15 @@ class MapsDataCollection:
                                     try:
                                         urllib.request.urlretrieve(img_url,
                                                                    f"{file_location}/videos/{title_name}_{name}.mp4")
-                                        print("succesfully download videos")
+                                        print(f"{datetime.datetime.now()} succesfully download videos")
                                         img_iteration += 1
                                     except Exception as e:
-                                        print(e)
+                                        print(f'{datetime.datetime.now()} {e}')
                                         pass
                                     switch_to_frame = True
                                 except Exception as e:
-                                    print(e)
-                                    print("fail to open frame")
+                                    # print(e)
+                                    # print("fail to open frame")
                                     self.driver.switch_to.default_content()
                                     continue
                             else:
@@ -606,20 +605,20 @@ class MapsDataCollection:
                                                 urllib.request.urlretrieve(url,
                                                                            f"{file_location}/{add_ons_path}{title_name}_{name[4]}.{format_}")
                                                 img_iteration += 1
-                                                print('sucessfully download images')
+                                                print(f'{datetime.datetime.now()} sucessfully download images')
                                                 break
                                             except Exception as e:
-                                                print(e)
+                                                print(f"{datetime.datetime.now()} {e}")
                                                 continue
                                         except Exception as e:
-                                            print(e)
+                                            print(f"{datetime.datetime.now()} {e}")
                                             continue
 
                             if switch_to_frame:
-                                print("switch back to default content")
+                                # print("switch back to default content")
                                 self.driver.switch_to.default_content()
                             if img_iteration >= max_img_iteration:
-                                print('maximum images collection is reached')
+                                print(f'{datetime.datetime.now()} maximum images collection is reached')
                                 break
                     except Exception as e:
                         print(e)

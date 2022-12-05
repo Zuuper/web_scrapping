@@ -273,7 +273,7 @@ def check_collecting_images_result(surface_scraping_result):
         surface_scraping_df = surface_scraping_result
 
     not_complete_data = surface_scraping_df[~surface_scraping_df['title'].isin(img_gallery)]
-
+    print(not_complete_data)
     return not_complete_data.to_dict('records')
 
 
@@ -283,6 +283,7 @@ def collect_image_of_current_data(scraping_result_location):
     complete_collected_images = False
     df['title'] = df['title'].str.replace(r'[^\w\s]+', '', regex=True)
     not_complete_list = check_collecting_images_result(pd.DataFrame(df))
+    print(f"total not images profile missing is: {len(not_complete_list)}")
     jobs = []
     data_split = np.array_split(not_complete_list, cpu)
     for ds in data_split:
@@ -446,7 +447,6 @@ def setup_surface_scraping_result_with_consistent_name():
         print(len(df))
         try:
             save_surface_scraping_result(true_filename, df, '')
-
         except:
             df = df.drop_duplicates(subset='title', keep="last")
             df['title'] = df['title'].str.replace(r'[^\w\s]+', '')
@@ -526,7 +526,6 @@ def collect_deep_data(surface_result_file_location=None):
         return check_scraping_result(deep_scraping_result_filename, df)
 
     def jobs_process(job_data):
-        completed = False
         job_data = job_data
         jobs = []
         data_split = np.array_split(job_data, cpu)
@@ -537,15 +536,12 @@ def collect_deep_data(surface_result_file_location=None):
         for job in jobs:
             job.join()
 
-        job_data = check_scraping_result(deep_scraping_filename, pd.DataFrame(not_complete_list))
-        if not job_data:
-            completed = True
-
     if surface_result_file_location:
         file_location = surface_result_file_location.split('/')
         deep_scraping_filename = f"data_scraping_result/{file_location[len(file_location) - 1]}"
         not_complete_list = collect_scraping_result(surface_result_file_location, deep_scraping_filename)
-        print(f"total not completed : {not_complete_list}")
+        print(f"total not completed : {json.dumps(not_complete_list, indent=4)}")
+        print(f"total not completed : {len(not_complete_list)}")
         jobs_process(not_complete_list)
     else:
         for dir_ in listdir:
@@ -553,7 +549,7 @@ def collect_deep_data(surface_result_file_location=None):
             not_complete_list = collect_scraping_result(dir_, deep_scraping_filename)
             # data_listing = df.to_dict('records')
             print(f"total not completed : {not_complete_list}")
-            jobs_process(not_complete_list)
+            jobs_process(not_complete_list, deep_scraping_filename)
 
 
 def collect_image_data():
@@ -563,8 +559,9 @@ def collect_image_data():
 if __name__ == '__main__':
     # main()
     # collect_surface_data('search_keyword.txt', 'surface_scraping_result')
-    collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
+    # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
-    # collect_deep_data()
+    # collect_deep_data('activity.csv')
     collect_image_of_current_data(r'surface_result_with_group/activity.csv')
+    # collect_image_folder_name()
