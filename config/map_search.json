@@ -35,7 +35,6 @@
   },
   "deep_search_config": {
     "data_collection": {
-      "title":  {},
       "review_point": {},
       "review_total": {},
       "price_level": {},
