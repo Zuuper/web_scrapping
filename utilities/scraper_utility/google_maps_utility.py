@@ -481,7 +481,7 @@ class MapsDataCollection:
         result = {}
         data = self.driver
 
-    def image_collection(self, title_name, file_path = ""):
+    def image_collection(self, title_name, file_path=""):
         print("getting images")
         image_config = self.config['deep_search_config']['image_collection']
         parent_xpath = image_config['parent']

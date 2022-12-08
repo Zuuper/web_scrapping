@@ -259,7 +259,8 @@ def collecting_image_from_google_maps(data):
         maps_collection = google_maps_utility.MapsDataCollection
         engine = maps_collection(config_dir, options=init_options())
         engine.driver.get(d['link'])
-        engine.image_collection(d['title'], f'image_gallery/{d["title"]}')
+        title = d['title'].strip(" ")
+        engine.image_collection(title, f'image_gallery/{title}')
         engine.driver.quit()
 
 
@@ -558,9 +559,10 @@ def collect_image_data():
 
 if __name__ == '__main__':
     # main()
-    # collect_surface_data('search_keyword.txt', 'surface_scraping_result')
+    collect_surface_data('search_keyword.txt', 'surface_scraping_result')
     # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
     # collect_deep_data('activity.csv')
     collect_image_of_current_data(r'surface_result_with_group/activity.csv')
+    #
