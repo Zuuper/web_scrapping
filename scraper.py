@@ -310,8 +310,6 @@ def check_surface_results_keyword(filedir, keywords: [], location=""):
         new_locationdir.append(location_dir[0])
     new_keyword = []
     for word in keywords:
-        if location in new_locationdir:
-            continue
         if word in new_listdir and location in new_locationdir:
             continue
         new_keyword.append(word)
@@ -559,10 +557,10 @@ def collect_image_data():
 
 if __name__ == '__main__':
     # main()
-    collect_surface_data('search_keyword.txt', 'surface_scraping_result')
+    # collect_surface_data('search_keyword.txt', 'surface_scraping_result') # jangan dipake ini
     # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
-    # collect_deep_data('activity.csv')
+    collect_deep_data('activity.csv')
     collect_image_of_current_data(r'surface_result_with_group/activity.csv')
     #
