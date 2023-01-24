@@ -22,6 +22,7 @@
 #      'attribute_name': 'text', 'type_search': 'basic'}
 #
 # ]
+PC_CODE = "Xx ShadowMaster xX"
 API = ""
 Identities = [
     {'name': 'title',

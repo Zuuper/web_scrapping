@@ -302,15 +302,15 @@ def collect_image_of_current_data(scraping_result_location):
 def check_surface_results_keyword(filedir, keywords: [], location=""):
     listdir = os.listdir(filedir)
     new_listdir = []
-    new_locationdir = []
+    new_location_dir = []
     for dir_ in listdir:
         title = dir_.split('_')
         new_listdir.append(title[0])
         location_dir = title[1].split('.')
-        new_locationdir.append(location_dir[0])
+        new_location_dir.append(location_dir[0])
     new_keyword = []
     for word in keywords:
-        if word in new_listdir and location in new_locationdir:
+        if word in new_listdir and location in new_location_dir:
             continue
         new_keyword.append(word)
     return sorted(set(new_keyword))
@@ -551,8 +551,24 @@ def collect_deep_data(surface_result_file_location=None):
             jobs_process(not_complete_list, deep_scraping_filename)
 
 
-def collect_image_data():
-    pass
+def format_scraping_result(filename):
+    df = pd.read_csv(f"data_scraping_result/{filename}")
+    villa_col_name = ['title', 'address', 'contact_number', 'amenities', 'coordinate', 'regency']
+    food_col_name = ['title', 'short_description', 'address', 'contact_number', 'price_level', 'sub_category',
+                     'amenities', 'regency', 'coordinate', 'open_hours']
+    wow_col_name = ['title', 'sub_category', 'short_description', 'address', 'contact_number', 'site', 'amenities',
+                    'regency', 'coordinate', 'open_hours']
+
+    if "villa" in filename:
+        new_df = df[villa_col_name]
+    elif "restaurant" in filename:
+        new_df = df[food_col_name]
+    elif "activity" in filename:
+        new_df = df[wow_col_name]
+    else:
+        return 0
+
+    new_df.to_csv(f"data_scraping_for_bot/{filename}", index=False)
 
 
 if __name__ == '__main__':
@@ -561,6 +577,7 @@ if __name__ == '__main__':
     # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
-    collect_deep_data('activity.csv')
-    collect_image_of_current_data(r'surface_result_with_group/activity.csv')
+    # collect_deep_data('activity.csv')
+    # collect_image_of_current_data(r'surface_result_with_group/villa.csv')
+    format_scraping_result('villa.csv')
     # update

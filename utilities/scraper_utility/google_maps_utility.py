@@ -19,7 +19,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import urllib.request
 import socket
-
+from utilities.telegram_bot import bot_send_message
+from utilities.config import PC_CODE
 socket.setdefaulttimeout(15)
 
 
@@ -91,7 +92,9 @@ class MapsDataCollection:
                 self.driver.get(new_url)
 
         except Exception as e:
-            raise ValueError('position should include lat and lon')
+            error_name = 'position should include lat and lon'
+            bot_send_message(f"{PC_CODE} {error_name}")
+            raise ValueError(error_name)
         # print("--- Web Crawler Engine Ready to use --- ")
 
     def location_search(self, vertical_coordinate=1000000, max_iteration=1,
@@ -168,6 +171,7 @@ class MapsDataCollection:
                 except Exception as e:
                     print(f"{datetime.datetime.now} {e}")
                     if error_count >= 10:
+                        # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
                         raise Exception("limit error is reached, stop location search")
                     time.sleep(1)
                     error_count += 1
@@ -183,6 +187,7 @@ class MapsDataCollection:
             # result = self.collecting_data("deep", location_detail=location_detail)
             return self.premature_data
         except Exception as e:
+            bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
             raise ValueError(e)
 
     def setup_jobs(self, jobs, split_list, type_search, data_result):
