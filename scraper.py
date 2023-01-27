@@ -16,6 +16,7 @@ from utilities.utils import setup_bag_of_search_word, setup_location, setup_coll
     check_word_similarities
 
 pd.options.mode.chained_assignment = None  # default='warn'
+used_cpu = int(cpu_count() / 2) if int(cpu_count() / 2) >= 1 else 1
 
 
 def setup_scraper_configuration():
@@ -135,6 +136,17 @@ def google_maps_deep_search(data, queue_: Queue):
 
 def deep_search_single_data(data, filename):
     config_dir = "config/map_search.json"
+    daily_file_name = ""
+
+    if "villa" in filename:
+        daily_file_name = "villa"
+    elif "restaurant" in filename:
+        daily_file_name = "restaurant"
+    elif "activity" in filename:
+        daily_file_name = "activity"
+    elif "hotel" in filename:
+        daily_file_name = "hotel"
+
     for d in data:
         try:
             maps_collection = google_maps_utility.MapsDataCollection
@@ -155,6 +167,16 @@ def deep_search_single_data(data, filename):
                 print(e)
                 df.to_csv(filename, index=False)
                 print(f'{datetime.datetime.now()} success creating new csv file')
+
+            daily_filename = f"data_scraping_daily/{daily_file_name}_{datetime.datetime.now().date()}.csv"
+            try:
+                default_df = pd.read_csv(daily_filename)
+                new_df = pd.concat([default_df, df])
+                new_df.to_csv(daily_filename, index=False)
+                print(f'{datetime.datetime.now()} success adding new data to daily result csv')
+            except Exception as e:
+                print(e)
+                pass
             engine.driver.quit()
         except Exception as e:
             print(f"{datetime.datetime.now()} error : {e}")
@@ -279,7 +301,7 @@ def check_collecting_images_result(surface_scraping_result):
 
 
 def collect_image_of_current_data(scraping_result_location):
-    cpu = int(cpu_count() / 2)
+    cpu = used_cpu
     df = pd.read_csv(scraping_result_location)
     complete_collected_images = False
     df['title'] = df['title'].str.replace(r'[^\w\s]+', '', regex=True)
@@ -317,7 +339,7 @@ def check_surface_results_keyword(filedir, keywords: [], location=""):
 
 
 def main():
-    cpu = int(cpu_count() / 2)
+    cpu = used_cpu
     bag_of_words, locations, filename = setup_scraper_configuration()
     premature_data = {}
     data = []
@@ -453,8 +475,7 @@ def setup_surface_scraping_result_with_consistent_name():
 
 
 def collect_surface_and_deep_data(filename, surface_save_directory):
-    cpu = int(cpu_count() / 2)
-    used_keyword = []
+    cpu = used_cpu
     regencies, location = setup_location()
     locations = []
     max_iteration = 100
@@ -473,6 +494,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
                 surface_scraping_filename = f"surface_scraping_result/{keyword}_{province}.csv"
                 result = google_maps_location_collection([keyword], location, max_iteration)
                 data.append(result)
+
             print(f"\nFinish Collecting data for surface search")
             for result in data:
                 for key, val in result.items():
@@ -517,7 +539,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
 
 
 def collect_deep_data(surface_result_file_location=None):
-    cpu = int(cpu_count() / 2)
+    cpu = used_cpu
     listdir = os.listdir('surface_result_with_group')
 
     def collect_scraping_result(dir_name, deep_scraping_result_filename):
@@ -574,10 +596,10 @@ def format_scraping_result(filename):
 if __name__ == '__main__':
     # main()
     # collect_surface_data('search_keyword.txt', 'surface_scraping_result') # jangan dipake ini
-    # collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
+    collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
-    # collect_deep_data('activity.csv')
-    # collect_image_of_current_data(r'surface_result_with_group/villa.csv')
-    format_scraping_result('villa.csv')
+    collect_deep_data('villa.csv')
+    collect_image_of_current_data(r'surface_result_with_group/villa.csv')
+    # format_scraping_result('villa.csv')
     # update
