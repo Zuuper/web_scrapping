@@ -175,9 +175,10 @@ def deep_search_single_data(data, filename):
                 new_df.to_csv(daily_filename, index=False)
                 print(f'{datetime.datetime.now()} success adding new data to daily result csv')
             except Exception as e:
-                print(e)
+                print(f"error when adding data to daily csv {e}")
+                new_df.to_csv(daily_filename, index=False)
                 pass
-            engine.driver.quit()
+            # engine.driver.quit()
         except Exception as e:
             print(f"{datetime.datetime.now()} error : {e}")
             continue
