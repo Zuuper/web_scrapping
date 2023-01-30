@@ -281,7 +281,7 @@ def collecting_image_from_google_maps(data):
         maps_collection = google_maps_utility.MapsDataCollection
         engine = maps_collection(config_dir, options=init_options())
         engine.driver.get(d['link'])
-        title = d['title'].strip(" ")
+        title = str(d['title']).strip(" ")
         engine.image_collection(title, f'image_gallery/{title}')
         engine.driver.quit()
 
