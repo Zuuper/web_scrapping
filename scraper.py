@@ -1,7 +1,6 @@
 import datetime
 import json
 import os
-import re
 import time
 from multiprocessing import Queue, cpu_count, Process
 
@@ -30,6 +29,24 @@ def setup_scraper_configuration():
     for regency in regencies:
         regency_keyword.append(f"{regency} {location}".capitalize())
     return bag_of_words, regency_keyword, filename
+
+
+def setup_input_from_surface_result_with_group():
+    list_dir = os.listdir('surface_result_with_group')
+    print('select data you want to search by csv file')
+    list_dir_len = len(list_dir)
+    for index in range(list_dir_len):
+        print(f' {index + 1}. {list_dir[index]}')
+    input_success = False
+    while not input_success:
+        try:
+            input_user = int(input('pick the number above: '))
+            if input_user > list_dir_len or input_user < 1:
+                raise Exception(f'you should put number between 1 and {list_dir_len}')
+
+            return list_dir[input_user - 1]
+        except Exception as e:
+            print(e)
 
 
 def get_detail():
@@ -576,11 +593,11 @@ def collect_deep_data(surface_result_file_location=None):
 
 def format_scraping_result(filename):
     df = pd.read_csv(f"data_scraping_result/{filename}")
-    villa_col_name = ['title', 'address', 'contact_number', 'amenities', 'coordinate', 'regency']
+    villa_col_name = ['title', 'address', 'contact_number', 'amenities', 'coordinate', 'regency','link']
     food_col_name = ['title', 'short_description', 'address', 'contact_number', 'price_level', 'sub_category',
-                     'amenities', 'regency', 'coordinate', 'open_hours']
+                     'amenities', 'regency', 'coordinate', 'open_hours','link']
     wow_col_name = ['title', 'sub_category', 'short_description', 'address', 'contact_number', 'site', 'amenities',
-                    'regency', 'coordinate', 'open_hours']
+                    'regency', 'coordinate', 'open_hours','link']
 
     if "villa" in filename:
         new_df = df[villa_col_name]
@@ -596,11 +613,10 @@ def format_scraping_result(filename):
 
 if __name__ == '__main__':
     # main()
-    # collect_surface_data('search_keyword.txt', 'surface_scraping_result') # jangan dipake ini
     collect_surface_and_deep_data('search_keyword.txt', 'surface_scraping_result')
     # setup_surface_scraping_result_with_consistent_name()
     # check_duplicates('surface_result_with_group/villa.csv')
     collect_deep_data('villa.csv')
     collect_image_of_current_data(r'surface_result_with_group/villa.csv')
-    # format_scraping_result('villa.csv')
+    format_scraping_result('villa.csv')
     # update
