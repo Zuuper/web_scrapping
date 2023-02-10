@@ -300,8 +300,30 @@ def collecting_image_from_google_maps(data):
         engine = maps_collection(config_dir, options=init_options())
         engine.driver.get(d['link'])
         title = str(d['title']).strip(" ")
-        engine.image_collection(title, f'image_gallery/{title}')
+        try:
+            engine.image_collection(title, f'image_gallery/{title}')
+            print('finish')
+            set_report_image_result(title)
+        except Exception as e:
+            print(e)
         engine.driver.quit()
+
+
+def set_report_image_result(title):
+    data = {'title': title}
+    df = pd.DataFrame(data, index=[0])
+    daily_filename = f"data_scraping_images_daily/images_{datetime.datetime.now().date()}.csv"
+    print(daily_filename)
+    try:
+        default_df = pd.read_csv(daily_filename)
+        new_df = pd.concat([default_df, df])
+        new_df.to_csv(daily_filename, index=False)
+        # df.to_csv(filename, mode="a", index=True, header=is_using_header)
+        print(f'{datetime.datetime.now()} success adding new data to csv')
+    except Exception as e:
+        print(e)
+        df.to_csv(daily_filename, index=False)
+        print(f'{datetime.datetime.now()} success creating new csv file')
 
 
 def check_collecting_images_result(surface_scraping_result):

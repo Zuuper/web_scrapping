@@ -630,4 +630,4 @@ class MapsDataCollection:
                         continue
         except Exception as e:
             print(e)
-            pass
+            raise e
