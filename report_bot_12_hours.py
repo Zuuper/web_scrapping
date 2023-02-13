@@ -9,7 +9,7 @@ url = 'http://127.0.0.1:8000/api/secret/bot/scrapping/post'
 user_agent = 'JAMAL_Bot v4.0'
 encoded_user_agent = base64.b64encode(user_agent.encode()).decode()
 headers = {'User-Agent': encoded_user_agent, }
-UID = ""
+UID = "" # remember to fill this variabel
 
 
 # mendapatkan date
@@ -50,8 +50,9 @@ def main():
     text_data, filename = get_data_from_folder('data_scraping_daily', str(date))
     total_image_data = image_data.shape[0]
     total_text_data = text_data.shape[0]
-    data = {'name': filename, 'type': 'scraping', 'total_text': total_text_data, 'total_file': total_image_data}
+    data = {'name': filename, 'type': filename, 'total_text': total_text_data, 'total_file': total_image_data,'computer': UID }
     response = requests.post(url=url, data=data, headers=headers)
+    print(response.content)
     write_file('scraping_report.txt', f"{response.status_code} {print_time()}")
 
 
