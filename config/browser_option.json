@@ -1,8 +1,7 @@
 {
   "headless" : true,
   "lang": "--lang=en-US",
-  "user-data-dir": "--user-data-dir=C:\\Users\\Asus\\AppData\\Local\\Microsoft\\Edge\\User Data",
-  "profile-dir": "--profile-directory=Default",
-  "windows-size": "--window-size=1336,768",
-
+  "user-data-dir": "--user-data-dir=C:\\Users\\Asus\\AppData\\Local\\Google\\Chrome\\User Data\\",
+  "profile-dir": "--profile-directory=Person 2",
+  "windows-size": "--window-size=1336,768"
 }

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from hanging_threads import start_monitoring
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.options import Options
+from selenium.webdriver.chrome.options import Options
 
 from utilities.scraper_utility import google_maps_utility, google_utility
 from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data, \

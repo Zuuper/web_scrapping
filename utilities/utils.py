@@ -289,13 +289,13 @@ def setup_collecting_surface_data():
 
 
 def setup_location():
-    df = pd.read_csv(r'villages_in_indonesia_with_longitude_latitude.csv')
+    df = pd.read_csv(r'worldcities.csv')
     validation = False
     while not validation:
         try:
             input_location = str(input("set your location of search "))
-            regency = df.loc[df['name_province'] == input_location.upper()]
-            regency = regency['name_regency'].drop_duplicates()
+            regency = df.loc[df['country'] == input_location.capitalize()]
+            regency = regency['city'].drop_duplicates()
             print(regency)
             pre_validation = input('wanna change of of location ? (click enter to ignore)')
             validation = True if not pre_validation else False

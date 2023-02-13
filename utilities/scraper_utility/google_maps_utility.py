@@ -21,6 +21,7 @@ import urllib.request
 import socket
 from utilities.telegram_bot import bot_send_message
 from utilities.config import PC_CODE
+
 socket.setdefaulttimeout(15)
 
 
@@ -43,8 +44,11 @@ def search_on_maps(query: str, position: dict, driver: WebDriver):
 
 class MapsDataCollection:
     def __init__(self, config_dir, options, using_multiprocessor=False, total_cpu=1, max_thread=2):
-        self.driver = webdriver.Edge(EdgeChromiumDriverManager().install(), capabilities={"platform": "Windows"},
-                                     options=options)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options,
+                                       desired_capabilities={'browserName': 'chrome',
+                                                             'version': 'latest',
+                                                             'platform': 'ANY'
+                                                             })
         self.driver.maximize_window()
         self.prefix_url = "https://www.google.com/maps/search/"
         self.config = json.load(open(config_dir))
