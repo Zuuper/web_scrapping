@@ -288,6 +288,19 @@ def setup_collecting_surface_data():
         print(e)
 
 
+def get_duplicates(lst):
+    frequency = {}
+    duplicates = []
+    for item in lst:
+        item = item.lstrip().rstrip()
+        if item in frequency:
+            frequency[item] += 1
+            duplicates.append(item)
+        else:
+            frequency[item] = 1
+    return duplicates
+
+
 def setup_location():
     df = pd.read_csv(r'worldcities.csv')
     validation = False
@@ -299,12 +312,39 @@ def setup_location():
             print(regency)
             pre_validation = input('wanna change of of location ? (click enter to ignore)')
             validation = True if not pre_validation else False
-
+            print('---' * 20)
         except Exception as e:
             print(e)
             continue
+    regency_list = regency.to_list()
 
-    return regency.to_list(), input_location
+    second_validation = False
+    duplicates = []
+    freq = {}
+    while not second_validation:
+        try:
+            pre_validation = input('do you want to do on specific area ? (click enter to ignore)')
+            if not pre_validation:
+                second_validation = True
+                duplicates = regency_list
+                break
+            input_specific = str(input("set your specific location of search, you can select more "
+                                       "than 2 by seperate each words with commas ',' ")).lower()
+            list_data = input_specific.split(',')
+            total_list = [regency.lower() for regency in regency_list]
+
+            for data_ in list_data:
+                total_list.append(data_)
+            duplicates = get_duplicates(total_list)
+            for data_ in list_data:
+                duplicates.append(data_)
+            duplicates = get_duplicates(duplicates)
+            if duplicates:
+                second_validation = True
+        except Exception as e:
+            print(e)
+            continue
+    return duplicates, input_location
 
 
 def check_word_similarities(config_filedir, text):
