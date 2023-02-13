@@ -3,11 +3,13 @@ import datetime
 import os
 import requests
 import pandas as pd
+import uuid
 
 url = 'http://127.0.0.1:8000/api/secret/bot/scrapping/post'
 user_agent = 'JAMAL_Bot v4.0'
 encoded_user_agent = base64.b64encode(user_agent.encode()).decode()
 headers = {'User-Agent': encoded_user_agent, }
+UID = ""
 
 
 # mendapatkan date
@@ -53,5 +55,12 @@ def main():
     write_file('scraping_report.txt', f"{response.status_code} {print_time()}")
 
 
+# remember to setup UID first
+def set_uid(uid_value):
+    return uuid.uuid4() if uid_value == "" else uid_value
+
+
 if __name__ == "__main__":
+    UID = set_uid(UID)
+    print(f'your UID is {UID}')
     main()
