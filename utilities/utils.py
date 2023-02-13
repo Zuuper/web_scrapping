@@ -294,7 +294,7 @@ def setup_location():
     while not validation:
         try:
             input_location = str(input("set your location of search "))
-            regency = df.loc[df['country'] == input_location.capitalize()]
+            regency = df.loc[df['country'] == input_location.title()]
             regency = regency['city'].drop_duplicates()
             print(regency)
             pre_validation = input('wanna change of of location ? (click enter to ignore)')
