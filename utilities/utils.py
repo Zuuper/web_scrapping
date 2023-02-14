@@ -370,7 +370,7 @@ def setup_location():
         result.append(res)
     for specific_interest_location in specific_interest_location_list:
         if specific_interest_location in duplicates:
-            df_city = pd.read_excel(f'./excel_of_{specific_interest_location.replace(" ","_").lstrip().rstrip()}_city')
+            df_city = pd.read_excel(f'./excel_of_{specific_interest_location.replace(" ","_").lstrip().rstrip()}_city.xlsx')
             city_list = df_city['City'].to_list()
             for city in city_list:
                 data = f"{city}, {specific_interest_location}, {input_location}"
