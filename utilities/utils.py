@@ -320,7 +320,6 @@ def setup_location():
 
     second_validation = False
     duplicates = []
-    freq = {}
     while not second_validation:
         try:
             pre_validation = input('do you want to do on specific area ? (click enter to ignore)')
@@ -344,7 +343,32 @@ def setup_location():
         except Exception as e:
             print(e)
             continue
-    return duplicates, input_location
+    result = []
+    for data_ in duplicates:
+        admin = df.loc[df['city'] == data_.title()]
+        admin_list = admin['admin_name'].to_list()
+        if len(admin) > 1:
+            valid = False
+            print('there is more than 1 cities name with different administration name, please pick one of this '
+                  'choices: ')
+            for admin_idx in range(len(admin_list)):
+                print(f'{admin_idx + 1}. {admin_list[admin_idx]}')
+            while not valid:
+                user_choice = int(input('your choice is: '))
+                if not user_choice:
+                    print('choose of the choices')
+                    continue
+                if user_choice > len(admin_list) or user_choice < 0:
+                    print(f'pick one choices from 1 to {len(admin_list)}')
+                    continue
+                res = f'{data_}, {admin_list[user_choice - 1]}'
+                valid = True
+        else:
+            res = f'{data_}, {admin_list[0]}'
+        print('res', res)
+        result.append(res)
+    print(result, input_location)
+    return result, input_location
 
 
 def check_word_similarities(config_filedir, text):
