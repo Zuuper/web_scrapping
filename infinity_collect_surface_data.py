@@ -1,5 +1,6 @@
-from scraper import collect_surface_data
+from scraper import collect_surface_data, setup_keyword_for_surface_search
 
 if __name__ == '__main__':
-    keyword_list = './search_keyword.txt'
-    collect_surface_data(keyword_list,'./surface_scraping_result')
+    data = setup_keyword_for_surface_search()
+    keyword_list = f'./{data}'
+    collect_surface_data(keyword_list, './surface_scraping_result')

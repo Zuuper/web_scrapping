@@ -49,6 +49,23 @@ def setup_input_from_surface_result_with_group():
             print(e)
 
 
+def setup_keyword_for_surface_search():
+    list_dir = ['search_keyword_activity.txt', 'search_keyword_hotel.txt', 'search_keyword_restaurant.txt',
+                'search_keyword_villa.txt']
+    print('select file keyword you want to user: ')
+    list_dir_len = len(list_dir)
+    for index in range(list_dir_len):
+        print(f' {index + 1}. {list_dir[index]}')
+    input_success = False
+    while not input_success:
+        try:
+            input_user = int(input('pick the number above: '))
+            if input_user > list_dir_len or input_user < 1:
+                raise Exception(f'you should put number between 1 and {list_dir_len}')
+
+            return list_dir[input_user - 1]
+        except Exception as e:
+            print(e)
 def get_detail():
     pass
 
