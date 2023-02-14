@@ -320,6 +320,7 @@ def setup_location():
 
     second_validation = False
     duplicates = []
+    specific_interest_location_list = ['los angeles']
     while not second_validation:
         try:
             pre_validation = input('do you want to do on specific area ? (click enter to ignore)')
@@ -367,6 +368,13 @@ def setup_location():
             res = f'{data_}, {admin_list[0]}'
         print('res', res)
         result.append(res)
+    for specific_interest_location in specific_interest_location_list:
+        if specific_interest_location in duplicates:
+            df_city = pd.read_excel(f'./excel_of_{specific_interest_location.replace(" ","_").lstrip().rstrip()}_city')
+            city_list = df_city['City'].to_list()
+            for city in city_list:
+                data = f"{city}, {specific_interest_location}, {input_location}"
+                result.append(data)
     print(result, input_location)
     return result, input_location
 

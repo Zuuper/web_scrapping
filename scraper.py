@@ -378,89 +378,6 @@ def check_surface_results_keyword(filedir, keywords: [], location=""):
     return sorted(set(new_keyword))
 
 
-def main():
-    cpu = used_cpu
-    bag_of_words, locations, filename = setup_scraper_configuration()
-    premature_data = {}
-    data = []
-    start_time = time.time()
-    max_iteration = 100
-    if bag_of_words:
-        for word in bag_of_words:
-            premature_data[word] = pd.DataFrame()
-        for location in locations:
-            data.append(google_maps_location_collection(bag_of_words, location, max_iteration))
-        for result in data:
-            for key, val in result.items():
-                new_df = pd.DataFrame(val)
-                premature_data[key] = pd.concat([premature_data.get(key), new_df])
-
-    else:
-        filedir = f'surface_scraping_result/{filename}'
-        filename = filename.split("_")
-        print(filename)
-        premature_data[filename[0]] = pd.read_csv(filedir)
-    monitoring_thread = start_monitoring(seconds_frozen=10, test_interval=100)
-
-    # jobs = []
-    # locations_split = np.array_split(locations, cpu)
-    # for locations in locations_split:
-    #     job = Process(target=multiprocessing_location_collection, args=(bag_of_words, locations, max_iteration))
-    #     jobs.append(job)
-    #     job.start()
-    # for job in jobs:
-    #     job.join()
-
-    for data, val in premature_data.items():
-        data = data.lstrip(" ")
-        data_listing = val.to_dict('records')
-        surface_scraping_filename = f"surface_scraping_result/{data}_{str(datetime.datetime.now().strftime('%d_%m_%Y'))}.csv"
-        deep_scraping_filename = f"data_scraping_result/{data}_{str(datetime.datetime.now().strftime('%d_%m_%Y'))}.csv"
-        save_surface_scraping_result(surface_scraping_filename, data_listing)
-        completed = False
-        not_complete_list = check_scraping_result(deep_scraping_filename, pd.DataFrame(data_listing))
-
-        print(f"total not completed : {not_complete_list}")
-        while not completed:
-            jobs = []
-            data_split = np.array_split(not_complete_list, cpu)
-            for ds in data_split:
-                job = Process(target=deep_search_single_data, args=(ds, deep_scraping_filename))
-                jobs.append(job)
-                job.start()
-            for job in jobs:
-                job.join()
-            not_complete_list = check_scraping_result(deep_scraping_filename, pd.DataFrame(not_complete_list))
-
-            if not not_complete_list:
-                completed = True
-        check_duplicates(deep_scraping_filename)
-
-        complete_collected_images = False
-        not_complete_list = check_collecting_images_result(pd.DataFrame(data_listing))
-        while not complete_collected_images:
-            jobs = []
-            data_split = np.array_split(not_complete_list, cpu)
-            for ds in data_split:
-                ds = [i for n, i in enumerate(ds) if i not in ds[n + 1:]]
-                job = Process(target=collecting_image_from_google_maps, args=(ds,))
-                jobs.append(job)
-                job.start()
-
-            for job in jobs:
-                job.join()
-
-            not_complete_list = check_collecting_images_result(pd.DataFrame(data_listing))
-            if not not_complete_list:
-                complete_collected_images = True
-        print('complete iteration')
-    end_time = time.time()
-    print(f"total time taken to do jobs is: {end_time - start_time}")
-    """
-    :return:
-    """
-
-
 def collect_surface_data(filename, surface_save_directory):
     used_keyword = []
     len_keyword = 1
@@ -473,7 +390,8 @@ def collect_surface_data(filename, surface_save_directory):
     while len_keyword != 0:
         with open(filename, 'r') as f:
             keyword_list = f.read().splitlines()
-            keywords = check_surface_results_keyword(surface_save_directory, keyword_list, regencies)
+            # keywords = check_surface_results_keyword(surface_save_directory, keyword_list, regencies)
+            keywords = keyword_list
             print(f"keywords are : {keywords} \n\n")
             if len(keywords) == 0:
                 break
