@@ -418,7 +418,7 @@ def collect_surface_data(filename, surface_save_directory):
                 premature_data = {}
 
                 for location in locations:
-                    surface_scraping_filename = f"surface_scraping_result/{keyword}_{str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))}.csv "
+                    surface_scraping_filename = f"surface_scraping_result/{keyword}_{str(datetime.datetime.now().strftime('%Y_%m_%d_%H_%M'))}.csv "
                     data.append(google_maps_location_collection([keyword], location, max_iteration))
                 for result in data:
                     for key, val in result.items():
