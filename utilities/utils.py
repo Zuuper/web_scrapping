@@ -320,7 +320,7 @@ def setup_location():
 
     second_validation = False
     duplicates = []
-    specific_interest_location_list = ['los angeles']
+    specific_interest_location_list = ['los angeles','florida']
     while not second_validation:
         try:
             pre_validation = input('do you want to do on specific area ? (click enter to ignore)')
