@@ -308,7 +308,7 @@ def setup_location():
         try:
             input_location = str(input("set your location of search "))
             regency = df.loc[df['country'] == input_location.title()]
-            regency = regency['admin_name'].drop_duplicates()
+            regency = regency['city'].drop_duplicates()
             print(regency)
             pre_validation = input('wanna change of of location ? (click enter to ignore)')
             validation = True if not pre_validation else False
@@ -320,10 +320,10 @@ def setup_location():
 
     second_validation = False
     duplicates = []
-    specific_interest_location_list = ['los angeles', 'florida', 'texas']
+    specific_interest_location_list = ['los angeles','austin', 'dallas', 'houston']
     while not second_validation:
         try:
-            pre_validation = input('do you want to do on specific area ? (click enter to ignore)')
+            pre_validation = input('do you want to do search on specific area ? (click enter to ignore)')
             if not pre_validation:
                 second_validation = True
                 duplicates = regency_list
@@ -366,9 +366,6 @@ def setup_location():
                 valid = True
         else:
             res = f'{data_}, {admin_list}'
-        print('res', res)
-        if res == "florida, Florida":
-            res = 'florida'
         result.append(res)
     for specific_interest_location in specific_interest_location_list:
         if specific_interest_location in duplicates:
