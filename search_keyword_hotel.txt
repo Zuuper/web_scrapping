@@ -1,16 +1,8 @@
-Entire house
-Motel
-Vacation Home
-Villa
-Homestay
-Hostel
-Guesthouse
-Resort
-Bed and Breakfast
-Resort
-inn
-Campground
 2-star Hotels
 3-star Hotels
 4-star Hotels
 5-star Hotels
+Motel
+Hostel
+Resort
+
