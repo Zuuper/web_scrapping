@@ -45,6 +45,7 @@ def get_all_data():
             idx = data - 1
             filename = filedata_dirs[idx]
             print(filename)
+            list_data[idx].to_csv(f'./All PC Data Master/{filename}', index=False)
             try:
                 missing_data = setup_master_file(filename.replace('.csv',''), list_data[idx])
                 new_df = pd.DataFrame.from_dict(missing_data)
@@ -54,6 +55,7 @@ def get_all_data():
                     old_df = pd.DataFrame()
                 new_df = pd.concat([old_df,new_df], ignore_index=True)
                 new_df.to_csv(f'./All PC Data Master Not Complete/{filename}')
+
 
             except:
 
