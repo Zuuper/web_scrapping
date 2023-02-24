@@ -460,6 +460,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
     with open(filename, 'r') as f:
         keyword_list = f.read().splitlines()
         keywords = check_surface_results_keyword(surface_save_directory, keyword_list, location)
+        keywords = [x for x in keywords if x != '']
         print(f"keywords are: {keywords} \n\n")
         for keyword in keywords:
             print(f"\n\nsearching keyword for : {keyword}")
