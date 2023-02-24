@@ -1,32 +1,32 @@
 import pandas as pd
 import os
 
-from scraper import check_collecting_images_result, check_scraping_result
+from utilities.scraper_bot.scraper import check_scraping_result
 
 
 def get_all_data():
-    file_dirs = os.listdir('./All PC Data')
+    file_dirs = os.listdir('backup (do not touch)/All PC Data')
     for filedir in file_dirs:
-        filedata_dirs = os.listdir(f'./All PC Data/{filedir}')
+        filedata_dirs = os.listdir(f'backup (do not touch)/All PC Data/{filedir}')
         try:
-            activity_df = pd.read_csv('./All PC Data master/activity.csv')
+            activity_df = pd.read_csv('backup (do not touch)/All PC Data master/activity.csv')
         except:
             activity_df = pd.DataFrame()
         try:
-            hotel_df = pd.read_csv('./All PC Data master/hotel.csv')
+            hotel_df = pd.read_csv('backup (do not touch)/All PC Data master/hotel.csv')
         except:
             hotel_df = pd.DataFrame()
         try:
-            restaurant_df = pd.read_csv('./All PC Data master/restaurant.csv')
+            restaurant_df = pd.read_csv('backup (do not touch)/All PC Data master/restaurant.csv')
         except:
             restaurant_df = pd.DataFrame()
         try:
-            villa_df = pd.read_csv('./All PC Data master/villa.csv')
+            villa_df = pd.read_csv('backup (do not touch)/All PC Data master/villa.csv')
         except:
             villa_df = pd.DataFrame()
 
         for filedata in filedata_dirs:
-            df = pd.read_csv(f'./All PC Data/{filedir}/{filedata}')
+            df = pd.read_csv(f'backup (do not touch)/All PC Data/{filedir}/{filedata}')
             if 'activity' in filedata:
                 activity_df = pd.concat([activity_df, df], ignore_index=True)
                 # setup_master_file('activity', df)
@@ -65,7 +65,7 @@ def get_all_data():
 
 
 def setup_master_file(file_name, data_frame):
-    master_file = './All PC Data master'
+    master_file = 'backup (do not touch)/All PC Data master'
     master_df = ''
     if 'activity' in file_name:
         master_df = './master_data_scraping_result/master_activity.csv'

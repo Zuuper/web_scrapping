@@ -1,0 +1,8 @@
+2-star Hotels
+3-star Hotels
+4-star Hotels
+5-star Hotels
+Motel
+Hostel
+Resort
+

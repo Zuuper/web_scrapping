@@ -1,1 +1,0 @@
-E:\project\software_development\web_scrapping\venv\Scripts\python.exe E:\project\software_development\web_scrapping\report_bot_12_hours.py

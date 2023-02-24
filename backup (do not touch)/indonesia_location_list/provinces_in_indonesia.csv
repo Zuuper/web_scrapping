@@ -1,0 +1,35 @@
+,id,name,state_code,latitude,longitude,type
+0,1822,Aceh,AC,4.69513500,96.74939930,province
+1,1826,Bali,BA,-8.34053890,115.09195090,province
+2,1810,Banten,BT,-6.40581720,106.06401790,province
+3,1793,Bengkulu,BE,-3.79284510,102.26076410,province
+4,1829,DI Yogyakarta,YO,-7.87538490,110.42620880,province
+5,1805,DKI Jakarta,JK,-6.20876340,106.84559900,capital district
+6,1812,Gorontalo,GO,0.54354420,123.05676930,province
+7,1815,Jambi,JA,-1.61012290,103.61312030,province
+8,1825,Jawa Barat,JB,-7.09091100,107.66888700,province
+9,1802,Jawa Tengah,JT,-7.15097500,110.14025940,province
+10,1827,Jawa Timur,JI,-7.53606390,112.23840170,province
+11,1806,Kalimantan Barat,KB,0.47734750,106.61314050,province
+12,1819,Kalimantan Selatan,KS,-3.09264150,115.28375850,province
+13,1794,Kalimantan Tengah,KT,-1.68148780,113.38235450,province
+14,1804,Kalimantan Timur,KI,0.53865860,116.41938900,province
+15,1824,Kalimantan Utara,KU,3.07309290,116.04138890,province
+16,1820,Kepulauan Bangka Belitung,BB,-2.74105130,106.44058720,province
+17,1807,Kepulauan Riau,KR,3.94565140,108.14286690,province
+18,1811,Lampung,LA,-4.55858490,105.40680790,province
+19,1800,Maluku,MA,-3.23846160,130.14527340,province
+20,1801,Maluku Utara,MU,1.57099930,127.80876930,province
+21,1814,Nusa Tenggara Barat,NB,-8.65293340,117.36164760,province
+22,1818,Nusa Tenggara Timur,NT,-8.65738190,121.07937050,province
+23,1798,Papua,PA,-5.01222020,141.34701590,province
+24,1799,Papua Barat,PB,-1.33611540,133.17471620,province
+25,1809,Riau,RI,0.29334690,101.70682940,province
+26,1817,Sulawesi Barat,SR,-2.84413710,119.23207840,province
+27,1795,Sulawesi Selatan,SN,-3.66879940,119.97405340,province
+28,1813,Sulawesi Tengah,ST,-1.43002540,121.44561790,province
+29,1796,Sulawesi Tenggara,SG,-4.14491000,122.17460500,province
+30,1808,Sulawesi Utara,SA,0.62469320,123.97500180,province
+31,1828,Sumatera Barat,SB,-0.73993970,100.80000510,province
+32,1816,Sumatera Selatan,SS,-3.31943740,103.91439900,province
+33,1792,Sumatera Utara,SU,2.11535470,99.54509740,province

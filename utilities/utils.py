@@ -1,15 +1,15 @@
 import datetime
-import time
 
-import fuzzywuzzy
 from fuzzywuzzy import process
 
 import pandas as pd
 from geopy import Nominatim
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 import os
+
+parent_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+parent_directory = f'{parent_directory}\web_scrapping'
 
 
 def search_on_maps_only_query(query: str, driver: WebDriver):
@@ -302,7 +302,7 @@ def get_duplicates(lst):
 
 
 def setup_location():
-    df = pd.read_csv(r'worldcities.csv')
+    df = pd.read_csv(f'{parent_directory}/country_data/worldcities.csv')
     validation = False
     while not validation:
         try:
@@ -320,7 +320,7 @@ def setup_location():
 
     second_validation = False
     duplicates = []
-    specific_interest_location_list = ['los angeles','austin', 'dallas', 'houston', 'san diego']
+    specific_interest_location_list = ['los angeles', 'austin', 'dallas', 'houston', 'san diego']
     while not second_validation:
         try:
             pre_validation = input('do you want to do search on specific area ? (click enter to ignore)')
@@ -369,7 +369,8 @@ def setup_location():
         result.append(res)
     for specific_interest_location in specific_interest_location_list:
         if specific_interest_location in duplicates:
-            df_city = pd.read_excel(f'./excel_of_{specific_interest_location.replace(" ","_").lstrip().rstrip()}_city.xlsx')
+            df_city = pd.read_excel(
+                f'{parent_directory}/city_data/excel_of_{specific_interest_location.replace(" ", "_").lstrip().rstrip()}_city.xlsx')
             city_list = df_city['City'].to_list()
             for city in city_list:
                 data = f"{city}, {specific_interest_location}, {input_location}"
