@@ -34,7 +34,7 @@ def setup_scraper_configuration():
 
 
 def setup_input_from_surface_result_with_group():
-    list_dir = os.listdir(f'{parent_directory}/text_data/step_1_grouped')
+    list_dir = os.listdir(f'{parent_directory}/megatron_data/step_1_grouped')
     print('select data you want to search by csv file')
     list_dir_len = len(list_dir)
     for index in range(list_dir_len):
@@ -432,7 +432,7 @@ def collect_surface_data(filename, surface_save_directory):
 
 
 def setup_surface_scraping_result_with_consistent_name():
-    list_dir = os.listdir(f'{parent_directory}/text_data/step_1')
+    list_dir = os.listdir(f'{parent_directory}/megatron_data/step_1')
     for dir_ in list_dir:
         name_split = dir_.split("_")
         name = name_split[0]
@@ -467,7 +467,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
             data = []
             premature_data = {}
             for location in locations:
-                surface_scraping_filename = f"{parent_directory}/text_data/step_1/{keyword}_{province}.csv"
+                surface_scraping_filename = f"{parent_directory}/megatron_data/step_1/{keyword}_{province}.csv"
                 result = google_maps_location_collection([keyword], location, max_iteration)
                 data.append(result)
 
@@ -479,8 +479,8 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
             for data, val in premature_data.items():
                 print(f"starting to do deep search")
                 true_name = check_word_similarities(f"{parent_directory}/config/scraper_result_classification", keyword)
-                true_dir = f'{parent_directory}/text_data/step_1_grouped/{true_name}.csv'
-                deep_scraping_filename = f"{parent_directory}/text_data/step_1_grouped/{true_name}.csv"
+                true_dir = f'{parent_directory}/megatron_data/step_1_grouped/{true_name}.csv'
+                deep_scraping_filename = f"{parent_directory}/megatron_data/step_1_grouped/{true_name}.csv"
                 try:
                     df_temp = pd.read_csv(deep_scraping_filename)
                 except Exception as e:
@@ -516,10 +516,10 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
 
 def collect_deep_data(surface_result_file_location=None):
     cpu = used_cpu
-    listdir = os.listdir(f'{parent_directory}/text_data/step_1_grouped')
+    listdir = os.listdir(f'{parent_directory}/megatron_data/step_1_grouped')
 
     def collect_scraping_result(dir_name, deep_scraping_result_filename):
-        df = pd.read_csv(f"{parent_directory}/text_data/step_1_grouped/{dir_name}")
+        df = pd.read_csv(f"{parent_directory}/megatron_data/step_1_grouped/{dir_name}")
         return check_scraping_result(deep_scraping_result_filename, df)
 
     def jobs_process(job_data):
@@ -535,14 +535,14 @@ def collect_deep_data(surface_result_file_location=None):
 
     if surface_result_file_location:
         file_location = surface_result_file_location.split('/')
-        deep_scraping_filename = f"{parent_directory}text_data/step_1/{file_location[len(file_location) - 1]}"
+        deep_scraping_filename = f"{parent_directory}megatron_data/step_1/{file_location[len(file_location) - 1]}"
         not_complete_list = collect_scraping_result(surface_result_file_location, deep_scraping_filename)
         print(f"total not completed : {json.dumps(not_complete_list, indent=4)}")
         print(f"total not completed : {len(not_complete_list)}")
         jobs_process(not_complete_list)
     else:
         for dir_ in listdir:
-            deep_scraping_filename = f"{parent_directory}text_data/step_1_grouped/{dir_}"
+            deep_scraping_filename = f"{parent_directory}megatron_data/step_1_grouped/{dir_}"
             not_complete_list = collect_scraping_result(dir_, deep_scraping_filename)
             # data_listing = df.to_dict('records')
             print(f"total not completed : {not_complete_list}")
