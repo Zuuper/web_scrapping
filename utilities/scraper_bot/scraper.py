@@ -595,6 +595,7 @@ def scraper(keyword_filename):
     step_three_save_directory = f'{parent_directory}/megatron_images'
 
     for regency in regencies:
+        regency = regency.replace('[', '').replace(']', '').replace('"', '').replace("'", '')
         locations.append(f"{regency} {location}".capitalize())
     with open(keyword_filename, 'r') as f:
         keyword_list = f.read().splitlines()
@@ -679,7 +680,6 @@ def scraper(keyword_filename):
                                     | error log : \n {e}"
                         print(error_log)
                         log_file.write(error_log)
-
 
 
 if __name__ == '__main__':
