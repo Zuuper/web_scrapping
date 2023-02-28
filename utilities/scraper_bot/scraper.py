@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 
 from utilities.scraper_utility import google_maps_utility, google_utility
 from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data, \
-    check_word_similarities
+    check_word_similarities, time_formatter
 
 pd.options.mode.chained_assignment = None  # default='warn'
 used_cpu = int(cpu_count() / 2) if int(cpu_count() / 2) >= 1 else 1
@@ -343,8 +343,8 @@ def set_report_image_result(title):
         print(f'{datetime.datetime.now()} success creating new csv file')
 
 
-def check_collecting_images_result(surface_scraping_result):
-    img_gallery = os.listdir(f'{parent_directory}/images_data')
+def check_collecting_images_result(surface_scraping_result, filename=f'{parent_directory}/megatron_image'):
+    img_gallery = os.listdir(filename)
     if type(surface_scraping_result) == 'str':
         surface_scraping_df = pd.read_csv(surface_scraping_result)
     elif type(surface_scraping_result) == 'list':
@@ -378,7 +378,7 @@ def collect_image_of_current_data(scraping_result_location):
     print(f"{datetime.datetime.now()} finish all image collection")
 
 
-def check_surface_results_keyword(filedir, keywords: [], location=""):
+def check_keyword(filedir, keywords: [], location=""):
     listdir = os.listdir(filedir)
     new_listdir = []
     new_location_dir = []
@@ -407,7 +407,7 @@ def collect_surface_data(filename, surface_save_directory):
     while len_keyword != 0:
         with open(filename, 'r') as f:
             keyword_list = f.read().splitlines()
-            # keywords = check_surface_results_keyword(surface_save_directory, keyword_list, regencies)
+            # keywords = check_keyword(surface_save_directory, keyword_list, regencies)
             keywords = keyword_list
             print(f"keywords are : {keywords} \n\n")
             if len(keywords) == 0:
@@ -427,7 +427,7 @@ def collect_surface_data(filename, surface_save_directory):
                 for data, val in premature_data.items():
                     data_listing = val.to_dict('records')
                     save_surface_scraping_result(surface_scraping_filename, data_listing, keyword)
-            len_keyword = len(check_surface_results_keyword(surface_save_directory, keywords))
+            len_keyword = len(check_keyword(surface_save_directory, keywords))
             print(f"result len keyword is {len_keyword}")
 
 
@@ -459,7 +459,7 @@ def collect_surface_and_deep_data(filename, surface_save_directory):
         locations.append(f"{regency} {location}".capitalize())
     with open(filename, 'r') as f:
         keyword_list = f.read().splitlines()
-        keywords = check_surface_results_keyword(surface_save_directory, keyword_list, location)
+        keywords = check_keyword(surface_save_directory, keyword_list, location)
         keywords = [x for x in keywords if x != '']
         print(f"keywords are: {keywords} \n\n")
         for keyword in keywords:
@@ -522,7 +522,7 @@ def collect_deep_data(surface_result_file_location=None):
         df = pd.read_csv(f"{parent_directory}/megatron_data/step_1_grouped/{dir_name}")
         return check_scraping_result(deep_scraping_result_filename, df)
 
-    def jobs_process(job_data):
+    def jobs_process_(job_data):
         job_data = job_data
         jobs = []
         data_split = np.array_split(job_data, cpu)
@@ -539,14 +539,14 @@ def collect_deep_data(surface_result_file_location=None):
         not_complete_list = collect_scraping_result(surface_result_file_location, deep_scraping_filename)
         print(f"total not completed : {json.dumps(not_complete_list, indent=4)}")
         print(f"total not completed : {len(not_complete_list)}")
-        jobs_process(not_complete_list)
+        jobs_process_(not_complete_list)
     else:
         for dir_ in listdir:
             deep_scraping_filename = f"{parent_directory}megatron_data/step_1_grouped/{dir_}"
             not_complete_list = collect_scraping_result(dir_, deep_scraping_filename)
             # data_listing = df.to_dict('records')
             print(f"total not completed : {not_complete_list}")
-            jobs_process(not_complete_list)
+            jobs_process_(not_complete_list)
 
 
 def format_scraping_result(filename):
@@ -567,6 +567,119 @@ def format_scraping_result(filename):
         return 0
 
     new_df.to_csv(f"data_scraping_for_bot/{filename}", index=False)
+
+
+def jobs_process(job_data, cpu, filename, target, is_collected_image=False):
+    job_data = job_data
+    jobs = []
+    data_split = np.array_split(job_data, cpu)
+    for ds in data_split:
+        args = (ds,) if is_collected_image else (ds, filename)
+        job = Process(target=target, args=args)
+        jobs.append(job)
+        job.start()
+    for job in jobs:
+        job.join()
+
+
+def scraper(keyword_filename):
+    cpu = used_cpu
+    regencies, location = setup_location()
+    locations = []
+    max_iteration = 100
+    province = location
+    step_one_save_directory = f'{parent_directory}/megatron_data/step_1'
+    step_one_group_save_directory = f'{parent_directory}/megatron_data/step_1_grouped'
+    step_two_save_directory = f'{parent_directory}/megatron_data/step_2'
+    step_two_group_save_directory = f'{parent_directory}/megatron_data/step_2_grouped'
+    step_three_save_directory = f'{parent_directory}/megatron_images'
+
+    for regency in regencies:
+        locations.append(f"{regency} {location}".capitalize())
+    with open(keyword_filename, 'r') as f:
+        keyword_list = f.read().splitlines()
+        keywords = [x for x in keyword_list if x != '']
+        keyword_step_one = check_keyword(step_one_save_directory, keyword_list, location)
+        keyword_step_two = check_keyword(step_two_save_directory, keyword_list, location)
+        init_time = datetime.datetime.now()
+        init_time_formatter = time_formatter(init_time)
+
+        with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'a') as log_file:
+            for keyword in keywords:
+                for location in locations:
+                    # this is only for get data while the data is not created in folder
+                    start_time_formatted = time_formatter(datetime.datetime.now())
+                    starting_log = f"{start_time_formatted} | searching keyword for : {keyword} at {location}"
+                    print(starting_log)
+                    log_file.write(starting_log)
+                    step_one_filename = f"{step_one_save_directory}/\
+                                        {keyword}_{location}_" \
+                                        f"{str(datetime.datetime.now().strftime('%Y_%m_%d_%H_%M'))}.csv "
+
+                    if keyword in keyword_step_one:
+                        starting_step_one = time_formatter(datetime.datetime.now())
+                        starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location}"
+                        print(starting_step_one)
+                        log_file.write(starting_log)
+                        try:
+                            data = google_maps_location_collection([keyword], location, max_iteration)
+                            for result in data:
+                                for key, val in result.items():
+                                    new_df = pd.DataFrame(val)
+                                    save_surface_scraping_result(step_one_filename, new_df, keyword)
+                            success_step_one = time_formatter(datetime.datetime.now())
+                            success_log = f"{success_step_one} | finish on step one for {keyword} at {location}"
+                            print(success_log)
+                            log_file.write(success_log)
+                        except Exception as e:
+                            error_step_one = time_formatter(datetime.datetime.now())
+                            error_log = f"{error_step_one} | error on step one for {keyword} at {location} \
+                                        | error log : \n {e}"
+                            print(error_log)
+                            log_file.write(error_log)
+
+                    step_one_df = pd.read_csv(step_one_filename)
+                    if keyword in keyword_step_two:
+                        starting_step_two = time_formatter(datetime.datetime.now())
+                        starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location}"
+                        print(starting_step_two)
+                        log_file.write(starting_step_two)
+                        try:
+                            step_two_filename = f"{step_two_save_directory}/\
+                                                {keyword}_{location}_" \
+                                                f"{str(datetime.datetime.now().strftime('%Y_%m_%d_%H_%M'))}.csv "
+                            step_one_dict = step_one_df.to_dict('records')
+                            jobs_process(step_one_dict, cpu, step_two_filename, deep_search_single_data)
+                            success_step_two = time_formatter(datetime.datetime.now())
+                            success_log = f"{success_step_two} | finish on step two for {keyword} at {location}"
+                            print(success_log)
+                            log_file.write(success_log)
+                        except Exception as e:
+                            error_step_two = time_formatter(datetime.datetime.now())
+                            error_log = f"{error_step_two} | error on step two for {keyword} at {location} \
+                                        | error log : \n {e}"
+                            print(error_log)
+                            log_file.write(error_log)
+
+                    try:
+                        starting_step_three = time_formatter(datetime.datetime.now())
+                        starting_step_three = f"{starting_step_three} | starting step two for {keyword} at {location}"
+                        print(starting_step_three)
+                        log_file.write(starting_step_three)
+                        step_one_df['title'] = step_one_df['title'].str.replace(r'[^\w\s]+', '', regex=True)
+                        not_complete_list = check_collecting_images_result(step_one_df)
+                        jobs_process(not_complete_list, cpu, '', collecting_image_from_google_maps, True)
+                        success_step_three = time_formatter(datetime.datetime.now())
+                        success_log = f"{success_step_three} | finish on step three for {keyword} at {location}"
+                        print(success_log)
+                        log_file.write(success_log)
+                    except Exception as e:
+                        error_step_three = time_formatter(datetime.datetime.now())
+                        error_log = f"{error_step_three} | error on step two for {keyword} at {location} \
+                                    | error log : \n {e}"
+                        print(error_log)
+                        log_file.write(error_log)
+
 
 
 if __name__ == '__main__':

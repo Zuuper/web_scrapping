@@ -11,6 +11,7 @@ import os
 parent_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 parent_directory = f'{parent_directory}\web_scrapping'
 
+
 def search_on_maps_only_query(query: str, driver: WebDriver):
     return driver.get(query) if query and driver else ValueError('parameter is missing')
 
@@ -376,6 +377,10 @@ def setup_location():
                 result.append(data)
     print(result, input_location)
     return result, input_location
+
+
+def time_formatter(time: datetime.datetime):
+    return time.strftime("%d/%m/%Y %H:%M:%S")
 
 
 def check_word_similarities(config_filedir, text):
