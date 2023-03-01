@@ -1,4 +1,5 @@
 import datetime
+import glob
 import json
 import os
 import time
@@ -6,7 +7,6 @@ from multiprocessing import Queue, cpu_count, Process
 
 import numpy as np
 import pandas as pd
-from dill.pointers import parent
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
@@ -15,7 +15,8 @@ from utilities.utils import setup_bag_of_search_word, setup_location, setup_coll
     check_word_similarities, time_formatter
 
 pd.options.mode.chained_assignment = None  # default='warn'
-used_cpu = int(cpu_count() / 2) if int(cpu_count() / 2) >= 1 else 1
+# used_cpu = int(cpu_count() / 2) if int(cpu_count() / 2) >= 1 else 1
+used_cpu = 1
 parent_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 parent_directory = f'{parent_directory}\web_scrapping'
 
@@ -53,7 +54,7 @@ def setup_input_from_surface_result_with_group():
 
 def setup_keyword_for_surface_search():
     list_dir = ['search_keyword_activity.txt', 'search_keyword_hotel.txt', 'search_keyword_restaurant.txt',
-                'search_keyword_villa.txt']
+                'search_keyword_villa.txt','search_keyword.txt']
     print('select file keyword you want to user: ')
     list_dir_len = len(list_dir)
     for index in range(list_dir_len):
@@ -73,7 +74,7 @@ def setup_keyword_for_surface_search():
 def init_options():
     options = Options()
     data = json.load(open(f'{parent_directory}/config/browser_option.json'))
-    options.headless = data['headless']
+    options.headless = True if data['headless'] == 'false' else False
     # options.add_argument("--kiosk")
     options.add_argument(data['lang'])
     options.add_argument(data['user-data-dir'])
@@ -121,7 +122,7 @@ def google_maps_location_collection(search_param, location, max_iteration):
             data[param] = premature_data
         except Exception as e:
             print(e)
-            continue
+            break
         engine.driver.quit()
     # queue_.put(data)
     return data
@@ -188,7 +189,8 @@ def deep_search_single_data(data, filename):
             try:
                 result = engine.individual_deep_search(d)
             except Exception as e:
-                continue
+                raise ValueError(e)
+                break
             df = pd.DataFrame([result])
 
             try:
@@ -388,10 +390,11 @@ def check_keyword(filedir, keywords: [], location=""):
         location_dir = title[1].split('.')
         new_location_dir.append(location_dir[0])
     new_keyword = []
+    print(new_listdir)
+    print(new_location_dir)
     for word in keywords:
-        if word in new_listdir and location in new_location_dir:
-            continue
-        new_keyword.append(word)
+        if word not in new_listdir and location not in new_location_dir:
+            new_keyword.append(word)
     return sorted(set(new_keyword))
 
 
@@ -586,7 +589,7 @@ def scraper(keyword_filename):
     cpu = used_cpu
     regencies, location = setup_location()
     locations = []
-    max_iteration = 100
+    max_iteration = 20
     province = location
     step_one_save_directory = f'{parent_directory}/megatron_data/step_1'
     step_one_group_save_directory = f'{parent_directory}/megatron_data/step_1_grouped'
@@ -602,9 +605,9 @@ def scraper(keyword_filename):
         keywords = [x for x in keyword_list if x != '']
         keyword_step_one = check_keyword(step_one_save_directory, keyword_list, location)
         keyword_step_two = check_keyword(step_two_save_directory, keyword_list, location)
-        init_time = datetime.datetime.now()
-        init_time_formatter = time_formatter(init_time)
-
+        print('keyword step 2', keyword_step_two)
+        init_time_formatter = time_formatter(datetime.datetime.now())
+        print(keyword_step_one)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'a') as log_file:
             for keyword in keywords:
                 for location in locations:
@@ -613,9 +616,9 @@ def scraper(keyword_filename):
                     starting_log = f"{start_time_formatted} | searching keyword for : {keyword} at {location}"
                     print(starting_log)
                     log_file.write(starting_log)
-                    step_one_filename = f"{step_one_save_directory}/\
-                                        {keyword}_{location}_" \
-                                        f"{str(datetime.datetime.now().strftime('%Y_%m_%d_%H_%M'))}.csv "
+                    # create filename for all data
+                    step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
+                                        f"{init_time_formatter}.csv "
 
                     if keyword in keyword_step_one:
                         starting_step_one = time_formatter(datetime.datetime.now())
@@ -624,10 +627,11 @@ def scraper(keyword_filename):
                         log_file.write(starting_log)
                         try:
                             data = google_maps_location_collection([keyword], location, max_iteration)
+                            print(type(data))
+                            print(data)
                             for result in data:
-                                for key, val in result.items():
-                                    new_df = pd.DataFrame(val)
-                                    save_surface_scraping_result(step_one_filename, new_df, keyword)
+                                new_df = pd.DataFrame(data[result])
+                                save_surface_scraping_result(step_one_filename.lstrip().rstrip(), new_df, keyword)
                             success_step_one = time_formatter(datetime.datetime.now())
                             success_log = f"{success_step_one} | finish on step one for {keyword} at {location}"
                             print(success_log)
@@ -638,17 +642,18 @@ def scraper(keyword_filename):
                                         | error log : \n {e}"
                             print(error_log)
                             log_file.write(error_log)
+                            break
 
-                    step_one_df = pd.read_csv(step_one_filename)
+                    step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
+                    step_one_df = pd.read_csv(step_one_file_list[0])
                     if keyword in keyword_step_two:
                         starting_step_two = time_formatter(datetime.datetime.now())
                         starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location}"
                         print(starting_step_two)
                         log_file.write(starting_step_two)
                         try:
-                            step_two_filename = f"{step_two_save_directory}/\
-                                                {keyword}_{location}_" \
-                                                f"{str(datetime.datetime.now().strftime('%Y_%m_%d_%H_%M'))}.csv "
+                            step_two_filename = f"{step_two_save_directory}/{keyword}_{location}_" \
+                                                f"{init_time_formatter}.csv "
                             step_one_dict = step_one_df.to_dict('records')
                             jobs_process(step_one_dict, cpu, step_two_filename, deep_search_single_data)
                             success_step_two = time_formatter(datetime.datetime.now())
@@ -661,6 +666,18 @@ def scraper(keyword_filename):
                                         | error log : \n {e}"
                             print(error_log)
                             log_file.write(error_log)
+                    else:
+                        step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
+                        not_complete_list = check_scraping_result(step_two_file_list[0], step_one_file_list[0])
+                        jobs = []
+                        data_split = np.array_split(not_complete_list, cpu)
+                        for ds in data_split:
+                            job = Process(target=deep_search_single_data, args=(ds, step_two_file_list[0]))
+                            jobs.append(job)
+                            job.start()
+                        for job in jobs:
+                            job.join()
+                        # jobs_process(not_complete_list, cpu, step_two_file_list[0], deep_search_single_data)
 
                     try:
                         starting_step_three = time_formatter(datetime.datetime.now())
@@ -668,7 +685,7 @@ def scraper(keyword_filename):
                         print(starting_step_three)
                         log_file.write(starting_step_three)
                         step_one_df['title'] = step_one_df['title'].str.replace(r'[^\w\s]+', '', regex=True)
-                        not_complete_list = check_collecting_images_result(step_one_df)
+                        not_complete_list = check_collecting_images_result(step_one_df,step_three_save_directory)
                         jobs_process(not_complete_list, cpu, '', collecting_image_from_google_maps, True)
                         success_step_three = time_formatter(datetime.datetime.now())
                         success_log = f"{success_step_three} | finish on step three for {keyword} at {location}"

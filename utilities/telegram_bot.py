@@ -6,7 +6,6 @@ user_id_2 = "676516449"
 user_id_luka = '927606900'
 bot = telebot.TeleBot(uid_token)
 
-updates = bot.get_updates()
 # chat_ids = []
 #
 # for update in updates:

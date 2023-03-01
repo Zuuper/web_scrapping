@@ -126,5 +126,99 @@
       "amenities": "//div[@class=\"QoXOEc\"]/div//div[@role=\"img\"]",
       "detail": "//div[@class=\"PbZDve cMxIxd\"]/p"
     }
+  },
+  "deep_search_config_backup": {
+    "data_collection": {
+      "review_point": {},
+      "review_total": {},
+      "price_level": {},
+      "sub_category": {},
+      "address": {},
+      "site": {},
+      "contact_number": {},
+      "check_in": {},
+      "check_out": {},
+      "open_hours": {
+        "need_to_click": false,
+        "alternative": {
+          "xpath": "//div[@jsan=\"t-Y_gmqpSdiUU,7.OqCZI,7.fontBodyMedium,7.WVXvdc,0.jslog\"]/div[2]",
+          "type": "aria-label"
+        }
+      },
+      "metadata": {
+        "need_to_click": true,
+        "alternative": {
+          "x_path": "//div[@role=\"region\"][@class=\"y0K5Df\"]//div[@jsan=\"t-1S0zc0ZApnU,7.PYvSYb,0.jslog,t-zvBBh-k3a_E\"]/span",
+          "type": "text"
+        }
+      },
+      "amenities": {
+        "need_to_click": true
+      },
+      "about": {
+        "need_to_click": true
+      },
+      "more_detail_about": {
+        "need_to_click": true
+      }
+    },
+    "data_area": {
+      "title": "text",
+      "review_point": "text",
+      "review_total": "text",
+      "price_level": "text",
+      "check_in": "text",
+      "check_out": "text",
+      "sub_category": "text",
+      "address": "aria-label",
+      "short_description": "text",
+      "site": "href",
+      "contact_number": "data-item-id",
+      "metadata": "",
+      "open_hours": "aria-label",
+      "images": "",
+      "amenities": "",
+      "about": "",
+      "more_detail_about": ""
+    },
+    "data_xpath": {
+      "title": "//h1[@jsan=\"7.DUwDvf,7.fontHeadlineLarge\"]/span[1]",
+      "review_point": "//div[@jsaction=\"pane.rating.moreReviews\"]/span[1]//span[@aria-hidden=\"true\"]",
+      "review_total": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//span[@jsan=\"0.aria-label\"]",
+      "price_level": "//span[contains(@aria-label,'Price:')]",
+      "sub_category": "//button[@jsaction=\"pane.rating.category\"]",
+      "address": "//*[contains(@data-item-id, \"address\")]",
+      "metadata": "//button[@jsaction=\"pane.attributes.expand;ptrdown:ripple.play;mousedown:ripple.play;keydown:ripple.play\"]",
+      "open_hours": "//div[@jsan=\"t-Y_gmqpSdiUU,7.OqCZI,7.fontBodyMedium,7.WVXvdc,0.jslog\"]/div[@class=\"t39EBf GUrTXd\"]",
+      "site": "//*[@data-item-id=\"authority\"]",
+      "contact_number": "//*[contains(@data-item-id,\"phone\")]",
+      "check_in": "//div[@data-item-id=\"place-info-links:\"]//span[1]",
+      "check_out": "//div[@data-item-id=\"place-info-links:\"]//span[2]",
+      "images": "//h2[@jsan=\"7.kPvgOb,7.fontHeadlineSmall\"]",
+      "amenities": "//div[@jsan=\"t-tDXXd4VdRrI,7.zSdcRe\"]/following-sibling::div[@class=\"QoXOEc\"]//div[@role=\"img\"]",
+      "about": "//button[contains(@aria-label,\"More details\")]",
+      "more_detail_about": "//div[@jsan=\"t-dgE5uNmzjiE,7.m6QErb,7.Hk4XGb,7.QoaCgb,7.KoSBEe,7.tLjsW\"]//button[@aria-label=\"More details\"]"
+    },
+    "image_collection": {
+      "banned_category": ["Street View & 360°", "Semua", "All"],
+      "scroll_area": "//div[@class=\"m6QErb DxyBCb kA9KIf dS8AEf\"]",
+      "parent": "//div[@jsan=\"7.cRLbXd,5.min-height\"]/div[@jsan=\"7.dryRY\"]/button",
+      "child": "//div[@role=\"img\"]/parent::a",
+      "child_img": "//div[@role=\"img\"]/div",
+      "collection": "style",
+      "parent_collection": "",
+      "opening_path": "//div[@role=\"region\"]//button[@jsaction=\"pane.carousel.photo;\"][@data-carousel-index=\"0\"]",
+      "tab_image": "//div[@role=\"tablist\"]",
+      "profile": "//button[@jsan=\"7.aoRNLd,7.kn2E5e,7.NMjTrf,7.lvtCsd,0.aria-label,0.jslog,22.jsaction\"]/img",
+      "frame": "//iframe[@class=\"widget-scene-imagery-iframe\"]",
+      "img_on_frame" : "//img",
+      "video_on_frame": "//video"
+    },
+    "more_detail_about_collection": {
+      "price" : "//div[@jsan=\"t-_js_1V5eck0,7.s35xed,0.jslog\"]//ul/li[@class=\"OyY9Kc\"]",
+      "essensial_info": "//div[@jsan=\"t-DrLZ3sYweRI,7.TIHn2\"]//ul/li",
+      "amenities": "//div[@class=\"QoXOEc\"]/div//div[@role=\"img\"]",
+      "detail": "//div[@class=\"PbZDve cMxIxd\"]/p"
+    }
   }
 }

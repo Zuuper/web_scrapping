@@ -375,12 +375,11 @@ def setup_location():
             for city in city_list:
                 data = f"{city}, {specific_interest_location}, {input_location}"
                 result.append(data)
-    print(result, input_location)
     return result, input_location
 
 
 def time_formatter(time: datetime.datetime):
-    return time.strftime("%d/%m/%Y %H:%M:%S")
+    return time.strftime("%d_%m_%Y_%H_%M_%S")
 
 
 def check_word_similarities(config_filedir, text):

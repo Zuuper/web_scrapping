@@ -97,7 +97,7 @@ class MapsDataCollection:
 
         except Exception as e:
             error_name = 'position should include lat and lon'
-            bot_send_message(f"{PC_CODE} {error_name}")
+            # bot_send_message(f"{PC_CODE} {error_name}")
             raise ValueError(error_name)
         # print("--- Web Crawler Engine Ready to use --- ")
 
@@ -191,7 +191,7 @@ class MapsDataCollection:
             # result = self.collecting_data("deep", location_detail=location_detail)
             return self.premature_data
         except Exception as e:
-            bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
+            # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
             raise ValueError(e)
 
     def setup_jobs(self, jobs, split_list, type_search, data_result):
@@ -363,6 +363,7 @@ class MapsDataCollection:
                     if value and value['need_to_click']:
                         if key != "images" and key != 'amenities':
                             self.driver.find_element(By.XPATH, x_path).click()
+
                         result = self.metadata_collections() if key == "metadata" \
                             else self.image_collection(el['title']) if key == "images" else \
                             self.amenities_collection()
@@ -435,23 +436,23 @@ class MapsDataCollection:
         return data
 
     def metadata_collections(self):
-        prefix_xpath = '//div[@role="main"]/div[@class="m6QErb DxyBCb kA9KIf dS8AEf"]/div[@role="region"]'
+        print('open meta data...')
+        prefix_xpath = '//div[@role="main"]//div[@class="iP2t7d fontBodyMedium"]'
         elements = self.driver.find_elements(By.XPATH, prefix_xpath)
         while len(elements) == 0:
             time.sleep(1)
             elements = self.driver.find_elements(By.XPATH, prefix_xpath)
             # print('element not found')
-        role_list = [el.get_attribute('aria-label') for el in elements]
-        # print(role_list)
+        print('element: ', elements)
         result = {}
-        for role in role_list:
+        for el in elements:
             # print(role)
             try:
-                parent_xpath = f'//div[@role="main"]//div[@role="region"][@aria-label="{role}"]'
-                child_xpath = f'{parent_xpath}/ul/li/span'
-                elements = self.driver.find_elements(By.XPATH, child_xpath)
-                data = [el.text for el in elements]
-                result[role] = " | ".join(data)
+                title = el.find_element(By.TAG_NAME, 'h2').text
+                child_xpath = '//ul/li/span'
+                metadata_list = el.find_elements(By.XPATH, child_xpath)
+                data = [child.text for child in metadata_list]
+                result[title] = " | ".join(data)
             except Exception as e:
                 # print(e)
                 continue
