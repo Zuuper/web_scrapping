@@ -608,7 +608,7 @@ def scraper(keyword_filename):
         print('keyword step 2', keyword_step_two)
         init_time_formatter = time_formatter(datetime.datetime.now())
         print(keyword_step_one)
-        with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'a') as log_file:
+        with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
             for keyword in keywords:
                 for location in locations:
                     # this is only for get data while the data is not created in folder
