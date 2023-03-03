@@ -320,7 +320,7 @@ def collecting_image_from_google_maps(data):
         engine.driver.get(d['link'])
         title = str(d['title']).strip(" ")
         try:
-            engine.image_collection(title, f'{parent_directory}/image_data/{title}')
+            engine.image_collection(title, f'{parent_directory}/megatron_images/{title}')
             print('finish')
             # set_report_image_result(title)
         except Exception as e:
