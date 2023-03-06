@@ -681,7 +681,7 @@ def scraper(keyword_filename):
 
                     try:
                         starting_step_three = time_formatter(datetime.datetime.now())
-                        starting_step_three = f"{starting_step_three} | starting step two for {keyword} at {location}"
+                        starting_step_three = f"{starting_step_three} | starting step three for {keyword} at {location}"
                         print(starting_step_three)
                         log_file.write(starting_step_three)
                         step_one_df['title'] = step_one_df['title'].str.replace(r'[^\w\s]+', '', regex=True)
@@ -693,7 +693,7 @@ def scraper(keyword_filename):
                         log_file.write(success_log)
                     except Exception as e:
                         error_step_three = time_formatter(datetime.datetime.now())
-                        error_log = f"{error_step_three} | error on step two for {keyword} at {location} \
+                        error_log = f"{error_step_three} | error on step three for {keyword} at {location} \
                                     | error log : \n {e}"
                         print(error_log)
                         log_file.write(error_log)
