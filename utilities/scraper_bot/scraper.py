@@ -605,7 +605,7 @@ def scraper(keyword_filename):
         keywords = [x for x in keyword_list if x != '']
         keyword_step_one = check_keyword(step_one_save_directory, keyword_list, location)
         keyword_step_two = check_keyword(step_two_save_directory, keyword_list, location)
-        print('keyword step 2', keyword_step_two)
+        # print('keyword step 2', keyword_step_two)
         init_time_formatter = time_formatter(datetime.datetime.now())
         print(keyword_step_one)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
@@ -613,7 +613,7 @@ def scraper(keyword_filename):
                 for location in locations:
                     # this is only for get data while the data is not created in folder
                     start_time_formatted = time_formatter(datetime.datetime.now())
-                    starting_log = f"{start_time_formatted} | searching keyword for : {keyword} at {location}"
+                    starting_log = f"{start_time_formatted} | searching keyword for : {keyword} at {location} \n"
                     print(starting_log)
                     log_file.write(starting_log)
                     # create filename for all data
@@ -622,7 +622,7 @@ def scraper(keyword_filename):
 
                     if keyword in keyword_step_one:
                         starting_step_one = time_formatter(datetime.datetime.now())
-                        starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location}"
+                        starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
                         print(starting_step_one)
                         log_file.write(starting_log)
                         try:
@@ -633,7 +633,7 @@ def scraper(keyword_filename):
                                 new_df = pd.DataFrame(data[result])
                                 save_surface_scraping_result(step_one_filename.lstrip().rstrip(), new_df, keyword)
                             success_step_one = time_formatter(datetime.datetime.now())
-                            success_log = f"{success_step_one} | finish on step one for {keyword} at {location}"
+                            success_log = f"{success_step_one} | finish on step one for {keyword} at {location} \n"
                             print(success_log)
                             log_file.write(success_log)
                         except Exception as e:
@@ -648,7 +648,7 @@ def scraper(keyword_filename):
                     step_one_df = pd.read_csv(step_one_file_list[0])
                     if keyword in keyword_step_two:
                         starting_step_two = time_formatter(datetime.datetime.now())
-                        starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location}"
+                        starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location} \n"
                         print(starting_step_two)
                         log_file.write(starting_step_two)
                         try:
@@ -657,7 +657,7 @@ def scraper(keyword_filename):
                             step_one_dict = step_one_df.to_dict('records')
                             jobs_process(step_one_dict, cpu, step_two_filename, deep_search_single_data)
                             success_step_two = time_formatter(datetime.datetime.now())
-                            success_log = f"{success_step_two} | finish on step two for {keyword} at {location}"
+                            success_log = f"{success_step_two} | finish on step two for {keyword} at {location} \n"
                             print(success_log)
                             log_file.write(success_log)
                         except Exception as e:
@@ -681,20 +681,20 @@ def scraper(keyword_filename):
 
                     try:
                         starting_step_three = time_formatter(datetime.datetime.now())
-                        starting_step_three = f"{starting_step_three} | starting step three for {keyword} at {location}"
+                        starting_step_three = f"{starting_step_three} | starting step three for {keyword} at {location} \n"
                         print(starting_step_three)
                         log_file.write(starting_step_three)
                         step_one_df['title'] = step_one_df['title'].str.replace(r'[^\w\s]+', '', regex=True)
                         not_complete_list = check_collecting_images_result(step_one_df,step_three_save_directory)
                         jobs_process(not_complete_list, cpu, '', collecting_image_from_google_maps, True)
                         success_step_three = time_formatter(datetime.datetime.now())
-                        success_log = f"{success_step_three} | finish on step three for {keyword} at {location}"
+                        success_log = f"{success_step_three} | finish on step three for {keyword} at {location} \n"
                         print(success_log)
                         log_file.write(success_log)
                     except Exception as e:
                         error_step_three = time_formatter(datetime.datetime.now())
                         error_log = f"{error_step_three} | error on step three for {keyword} at {location} \
-                                    | error log : \n {e}"
+                                    | error log : \n {e} \n"
                         print(error_log)
                         log_file.write(error_log)
 
