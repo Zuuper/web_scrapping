@@ -606,7 +606,8 @@ def scraper(keyword_filename):
         # print('keyword step 2', keyword_step_two)
         init_time_formatter = time_formatter(datetime.datetime.now())
         print('keyword step one is: ',keyword_step_one)
-        print('list of keyword is: ',keywords)
+        print('keyword step two is: ',keyword_step_two)
+        print('our list of keyword is: ',keywords)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
             for keyword in keywords:
                 for location in locations:
@@ -619,7 +620,7 @@ def scraper(keyword_filename):
                     step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
                                         f"{init_time_formatter}.csv "
                     print(keyword, "in step one is", keyword in keyword_step_one)
-                    if keyword in keyword_step_one:
+                    if keyword not in keyword_step_one:
                         starting_step_one = time_formatter(datetime.datetime.now())
                         starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
                         print(starting_step_one)
