@@ -125,7 +125,7 @@ class MapsDataCollection:
 
         try:
             # print('Start scraping data...')
-            # self.driver.find_element(By.XPATH, zoom_out).click()
+            self.driver.find_element(By.XPATH, zoom_out).click()
             error_count = 0
             while not start_scrapping:
                 try:
