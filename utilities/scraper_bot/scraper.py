@@ -603,99 +603,99 @@ def scraper(keyword_filename):
         keywords = [x for x in keyword_list if x != '']
         # print('keyword step 2', keyword_step_two)
         print('our list of keyword is: ',keywords)
-        with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'a+') as log_file:
-            for keyword in keywords:
-                for location in locations:
-                    # this is only for get data while the data is not created in folder
-                    start_time_formatted = time_formatter(datetime.datetime.now())
-                    starting_log = f"{start_time_formatted} | searching keyword for : {keyword} at {location} \n"
-                    print(starting_log)
-                    log_file.write(starting_log)
-                    # create filename for all data
-                    step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
-                                        f"{init_time_formatter}.csv "
-                    step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
-                    if len(step_one_file_list) == 0:
-                        starting_step_one = time_formatter(datetime.datetime.now())
-                        starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
-                        print(starting_step_one)
-                        log_file.write(starting_log)
-                        try:
-                            data = google_maps_location_collection([keyword], location, max_iteration)
-                            print(type(data))
-                            print(data)
-                            for result in data:
-                                new_df = pd.DataFrame(data[result])
-                                save_surface_scraping_result(step_one_filename.lstrip().rstrip(), new_df, keyword)
-                            success_step_one = time_formatter(datetime.datetime.now())
-                            success_log = f"{success_step_one} | finish on step one for {keyword} at {location} \n"
-                            print(success_log)
-                            log_file.write(success_log)
-                        except Exception as e:
-                            error_step_one = time_formatter(datetime.datetime.now())
-                            error_log = f"{error_step_one} | error on step one for {keyword} at {location} \
-                                        | error log : \n {e}"
-                            print(error_log)
-                            log_file.write(error_log)
-                            break
+        # with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'a+') as log_file:
+        for keyword in keywords:
+            for location in locations:
+                # this is only for get data while the data is not created in folder
+                start_time_formatted = time_formatter(datetime.datetime.now())
+                starting_log = f"{start_time_formatted} | searching keyword for : {keyword} at {location} \n"
+                print(starting_log)
+                # log_file.write(starting_log)
+                # create filename for all data
+                step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
+                                    f"{init_time_formatter}.csv "
+                step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
+                if len(step_one_file_list) == 0:
+                    starting_step_one = time_formatter(datetime.datetime.now())
+                    starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
+                    print(starting_step_one)
+                    # log_file.write(starting_log)
                     try:
-                        step_one_df = pd.read_csv(step_one_file_list[0])
-                    except:
-                        step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
-                        step_one_df = pd.read_csv(step_one_file_list[0])
-
-                    step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
-
-                    if len(step_two_file_list) == 0:
-                        starting_step_two = time_formatter(datetime.datetime.now())
-                        starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location} \n"
-                        print(starting_step_two)
-                        log_file.write(starting_step_two)
-                        try:
-                            step_two_filename = f"{step_two_save_directory}/{keyword}_{location}_" \
-                                                f"{init_time_formatter}.csv "
-                            step_one_dict = step_one_df.to_dict('records')
-                            jobs_process(step_one_dict, cpu, step_two_filename, deep_search_single_data)
-                            success_step_two = time_formatter(datetime.datetime.now())
-                            success_log = f"{success_step_two} | finish on step two for {keyword} at {location} \n"
-                            print(success_log)
-                            log_file.write(success_log)
-                        except Exception as e:
-                            error_step_two = time_formatter(datetime.datetime.now())
-                            error_log = f"{error_step_two} | error on step two for {keyword} at {location} \
-                                        | error log : \n {e}"
-                            print(error_log)
-                            log_file.write(error_log)
-                    else:
-                        not_complete_list = check_scraping_result(step_two_file_list[0], step_one_file_list[0])
-                        jobs = []
-                        data_split = np.array_split(not_complete_list, cpu)
-                        for ds in data_split:
-                            job = Process(target=deep_search_single_data, args=(ds, step_two_file_list[0]))
-                            jobs.append(job)
-                            job.start()
-                        for job in jobs:
-                            job.join()
-                        # jobs_process(not_complete_list, cpu, step_two_file_list[0], deep_search_single_data)
-
-                    try:
-                        starting_step_three = time_formatter(datetime.datetime.now())
-                        starting_step_three = f"{starting_step_three} | starting step three for {keyword} at {location} \n"
-                        print(starting_step_three)
-                        log_file.write(starting_step_three)
-                        step_one_df['title'] = step_one_df['title'].str.replace(r'[^\w\s]+', '', regex=True)
-                        not_complete_list = check_collecting_images_result(step_one_df,step_three_save_directory)
-                        jobs_process(not_complete_list, cpu, '', collecting_image_from_google_maps, True)
-                        success_step_three = time_formatter(datetime.datetime.now())
-                        success_log = f"{success_step_three} | finish on step three for {keyword} at {location} \n"
+                        data = google_maps_location_collection([keyword], location, max_iteration)
+                        print(type(data))
+                        print(data)
+                        for result in data:
+                            new_df = pd.DataFrame(data[result])
+                            save_surface_scraping_result(step_one_filename.lstrip().rstrip(), new_df, keyword)
+                        success_step_one = time_formatter(datetime.datetime.now())
+                        success_log = f"{success_step_one} | finish on step one for {keyword} at {location} \n"
                         print(success_log)
-                        log_file.write(success_log)
+                        # log_file.write(success_log)
                     except Exception as e:
-                        error_step_three = time_formatter(datetime.datetime.now())
-                        error_log = f"{error_step_three} | error on step three for {keyword} at {location} \
-                                    | error log : \n {e} \n"
+                        error_step_one = time_formatter(datetime.datetime.now())
+                        error_log = f"{error_step_one} | error on step one for {keyword} at {location} \
+                                    | error log : \n {e}"
                         print(error_log)
-                        log_file.write(error_log)
+                        # log_file.write(error_log)
+                        break
+                try:
+                    step_one_df = pd.read_csv(step_one_file_list[0])
+                except:
+                    step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
+                    step_one_df = pd.read_csv(step_one_file_list[0])
+
+                step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
+
+                if len(step_two_file_list) == 0:
+                    starting_step_two = time_formatter(datetime.datetime.now())
+                    starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location} \n"
+                    print(starting_step_two)
+                    # log_file.write(starting_step_two)
+                    try:
+                        step_two_filename = f"{step_two_save_directory}/{keyword}_{location}_" \
+                                            f"{init_time_formatter}.csv "
+                        step_one_dict = step_one_df.to_dict('records')
+                        jobs_process(step_one_dict, cpu, step_two_filename, deep_search_single_data)
+                        success_step_two = time_formatter(datetime.datetime.now())
+                        success_log = f"{success_step_two} | finish on step two for {keyword} at {location} \n"
+                        print(success_log)
+                        # log_file.write(success_log)
+                    except Exception as e:
+                        error_step_two = time_formatter(datetime.datetime.now())
+                        error_log = f"{error_step_two} | error on step two for {keyword} at {location} \
+                                    | error log : \n {e}"
+                        print(error_log)
+                        # log_file.write(error_log)
+                else:
+                    not_complete_list = check_scraping_result(step_two_file_list[0], step_one_file_list[0])
+                    jobs = []
+                    data_split = np.array_split(not_complete_list, cpu)
+                    for ds in data_split:
+                        job = Process(target=deep_search_single_data, args=(ds, step_two_file_list[0]))
+                        jobs.append(job)
+                        job.start()
+                    for job in jobs:
+                        job.join()
+                    # jobs_process(not_complete_list, cpu, step_two_file_list[0], deep_search_single_data)
+
+                try:
+                    starting_step_three = time_formatter(datetime.datetime.now())
+                    starting_step_three = f"{starting_step_three} | starting step three for {keyword} at {location} \n"
+                    print(starting_step_three)
+                    # log_file.write(starting_step_three)
+                    step_one_df['title'] = step_one_df['title'].str.replace(r'[^\w\s]+', '', regex=True)
+                    not_complete_list = check_collecting_images_result(step_one_df,step_three_save_directory)
+                    jobs_process(not_complete_list, cpu, '', collecting_image_from_google_maps, True)
+                    success_step_three = time_formatter(datetime.datetime.now())
+                    success_log = f"{success_step_three} | finish on step three for {keyword} at {location} \n"
+                    print(success_log)
+                    # log_file.write(success_log)
+                except Exception as e:
+                    error_step_three = time_formatter(datetime.datetime.now())
+                    error_log = f"{error_step_three} | error on step three for {keyword} at {location} \
+                                | error log : \n {e} \n"
+                    print(error_log)
+                    # log_file.write(error_log)
 
 
 if __name__ == '__main__':
