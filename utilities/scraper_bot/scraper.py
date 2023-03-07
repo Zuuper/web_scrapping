@@ -616,8 +616,6 @@ def scraper(keyword_filename):
                     step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
                                         f"{init_time_formatter}.csv "
                     step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
-                    step_one_df = pd.read_csv(step_one_file_list[0])
-
                     if len(step_one_file_list) == 0:
                         starting_step_one = time_formatter(datetime.datetime.now())
                         starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
@@ -641,6 +639,7 @@ def scraper(keyword_filename):
                             print(error_log)
                             log_file.write(error_log)
                             break
+                    step_one_df = pd.read_csv(step_one_file_list[0])
                     step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
 
                     if len(step_two_file_list) == 0:
