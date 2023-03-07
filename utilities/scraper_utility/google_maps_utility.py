@@ -171,6 +171,7 @@ class MapsDataCollection:
                             is_last_time_loading = False
                     start_scrapping = True if num_iteration >= max_iteration or check_element(self.driver,
                                                                                               end_sign) else False
+                    start_scrapping = True if num_iteration >= max_iteration else False
                     num_iteration += 1
                 except Exception as e:
                     print(f"{datetime.datetime.now} {e}")
