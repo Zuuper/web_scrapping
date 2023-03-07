@@ -646,7 +646,7 @@ def scraper(keyword_filename):
 
                     step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
                     step_one_df = pd.read_csv(step_one_file_list[0])
-                    if keyword in keyword_step_two:
+                    if keyword not in keyword_step_two:
                         starting_step_two = time_formatter(datetime.datetime.now())
                         starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location} \n"
                         print(starting_step_two)
