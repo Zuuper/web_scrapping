@@ -390,8 +390,6 @@ def check_keyword(filedir, keywords: [], location=""):
         location_dir = title[1].split('.')
         new_location_dir.append(location_dir[0])
     new_keyword = []
-    print(new_listdir)
-    print(new_location_dir)
     for word in keywords:
         if word not in new_listdir and location not in new_location_dir:
             new_keyword.append(word)
@@ -608,6 +606,7 @@ def scraper(keyword_filename):
         # print('keyword step 2', keyword_step_two)
         init_time_formatter = time_formatter(datetime.datetime.now())
         print(keyword_step_one)
+        print(keywords)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
             for keyword in keywords:
                 for location in locations:
