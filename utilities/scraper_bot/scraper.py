@@ -594,7 +594,7 @@ def scraper(keyword_filename):
     step_two_save_directory = f'{parent_directory}/megatron_data/step_2'
     step_two_group_save_directory = f'{parent_directory}/megatron_data/step_2_grouped'
     step_three_save_directory = f'{parent_directory}/megatron_images'
-
+    init_time_formatter = time_formatter(datetime.datetime.now())
     for regency in regencies:
         regency = regency.replace('[', '').replace(']', '').replace('"', '').replace("'", '')
         locations.append(f"{regency} {location}".capitalize())
@@ -602,7 +602,6 @@ def scraper(keyword_filename):
         keyword_list = f.read().splitlines()
         keywords = [x for x in keyword_list if x != '']
         # print('keyword step 2', keyword_step_two)
-        init_time_formatter = time_formatter(datetime.datetime.now())
         print('our list of keyword is: ',keywords)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
             for keyword in keywords:
@@ -639,7 +638,12 @@ def scraper(keyword_filename):
                             print(error_log)
                             log_file.write(error_log)
                             break
-                    step_one_df = pd.read_csv(step_one_file_list[0])
+                    try:
+                        step_one_df = pd.read_csv(step_one_file_list[0])
+                    except:
+                        step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
+                        step_one_df = pd.read_csv(step_one_file_list[0])
+
                     step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
 
                     if len(step_two_file_list) == 0:
