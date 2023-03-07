@@ -130,25 +130,20 @@ class MapsDataCollection:
             while not start_scrapping:
                 try:
                     time.sleep(1)
-                    # self.wait.until(EC.element_to_be_selected((By.XPATH, search_area)))
                     search_result = self.driver.find_element(By.XPATH, search_area)
                     self.driver.execute_script("arguments[0].scrollTop = arguments[1]", search_result,
                                                vertical_coordinate)
                     list_result = self.driver.find_elements(By.XPATH, list_area)
-                    # start_scrapping = True if list_result > 2 else False
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
-                    # print(f"first check loading status: {is_loading}")
                     if is_loading:
                         time.sleep(1)
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
-                    # print(f"second check loading status: {is_loading}")
                     if is_loading:
-                        # print('loading')
                         if is_last_time_loading:
                             if loading_count <= max_loading_count:
                                 if wait_loading_count == max_wait_loading_count:
-                                    # print("zoom out", loading_count)
                                     if is_zoom_out:
+                                        print('zoom out')
                                         self.driver.find_element(By.XPATH, zoom_out).click()
                                         is_zoom_out = False
                                     else:
@@ -171,17 +166,15 @@ class MapsDataCollection:
                             is_last_time_loading = False
                     start_scrapping = True if num_iteration >= max_iteration or check_element(self.driver,
                                                                                               end_sign) else False
-                    start_scrapping = True if num_iteration >= max_iteration else False
+                    # start_scrapping = True if num_iteration >= max_iteration else False
                     num_iteration += 1
                 except Exception as e:
                     print(f"{datetime.datetime.now} {e}")
                     if error_count >= 10:
-                        # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
                         raise Exception("limit error is reached, stop location search")
                     time.sleep(1)
                     error_count += 1
                     continue
-            # print('finish pre-collecting data, now collecting data')
             for element in list_result:
                 if len(self.premature_data) <= 1000:
                     self.premature_data.append({
@@ -189,7 +182,6 @@ class MapsDataCollection:
                         'link': element.get_attribute('href')
                     })
             length_list = len(self.premature_data)
-            # result = self.collecting_data("deep", location_detail=location_detail)
             return self.premature_data
         except Exception as e:
             # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
