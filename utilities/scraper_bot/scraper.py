@@ -618,7 +618,7 @@ def scraper(keyword_filename):
                     # create filename for all data
                     step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
                                         f"{init_time_formatter}.csv "
-
+                    print(keyword, "in step one is", keyword in keyword_step_one)
                     if keyword in keyword_step_one:
                         starting_step_one = time_formatter(datetime.datetime.now())
                         starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
