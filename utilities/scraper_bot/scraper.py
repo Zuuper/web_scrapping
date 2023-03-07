@@ -601,12 +601,8 @@ def scraper(keyword_filename):
     with open(keyword_filename, 'r') as f:
         keyword_list = f.read().splitlines()
         keywords = [x for x in keyword_list if x != '']
-        keyword_step_one = check_keyword(step_one_save_directory, keyword_list, location)
-        keyword_step_two = check_keyword(step_two_save_directory, keyword_list, location)
         # print('keyword step 2', keyword_step_two)
         init_time_formatter = time_formatter(datetime.datetime.now())
-        print('keyword step one is: ',keyword_step_one)
-        print('keyword step two is: ',keyword_step_two)
         print('our list of keyword is: ',keywords)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
             for keyword in keywords:
@@ -619,8 +615,10 @@ def scraper(keyword_filename):
                     # create filename for all data
                     step_one_filename = f"{step_one_save_directory}/{keyword}_{location}_"\
                                         f"{init_time_formatter}.csv "
-                    print(keyword, "in step one is", keyword in keyword_step_one)
-                    if keyword not in keyword_step_one:
+                    step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
+                    step_one_df = pd.read_csv(step_one_file_list[0])
+
+                    if len(step_one_file_list) != 0:
                         starting_step_one = time_formatter(datetime.datetime.now())
                         starting_step_one = f"{starting_step_one} | starting step one for {keyword} at {location} \n"
                         print(starting_step_one)
@@ -643,10 +641,9 @@ def scraper(keyword_filename):
                             print(error_log)
                             log_file.write(error_log)
                             break
+                    step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
 
-                    step_one_file_list = glob.glob(f"{step_one_save_directory}/{keyword}_{location}_*")
-                    step_one_df = pd.read_csv(step_one_file_list[0])
-                    if keyword not in keyword_step_two:
+                    if len(step_two_file_list) != 0:
                         starting_step_two = time_formatter(datetime.datetime.now())
                         starting_step_two = f"{starting_step_two} | starting step two for {keyword} at {location} \n"
                         print(starting_step_two)
@@ -667,7 +664,6 @@ def scraper(keyword_filename):
                             print(error_log)
                             log_file.write(error_log)
                     else:
-                        step_two_file_list = glob.glob(f"{step_two_save_directory}/{keyword}_{location}_*")
                         not_complete_list = check_scraping_result(step_two_file_list[0], step_one_file_list[0])
                         jobs = []
                         data_split = np.array_split(not_complete_list, cpu)
