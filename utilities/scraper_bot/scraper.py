@@ -605,8 +605,8 @@ def scraper(keyword_filename):
         keyword_step_two = check_keyword(step_two_save_directory, keyword_list, location)
         # print('keyword step 2', keyword_step_two)
         init_time_formatter = time_formatter(datetime.datetime.now())
-        print(keyword_step_one)
-        print(keywords)
+        print('keyword step one is: ',keyword_step_one)
+        print('list of keyword is: ',keywords)
         with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'w+') as log_file:
             for keyword in keywords:
                 for location in locations:
