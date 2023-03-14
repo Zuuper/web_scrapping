@@ -11,8 +11,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 from utilities.scraper_utility import google_maps_utility, google_utility
-from utilities.utils import setup_bag_of_search_word, setup_location, setup_collecting_surface_data, \
-    check_word_similarities, time_formatter
+from utilities.utils import setup_bag_of_search_word, setup_collecting_surface_data, \
+    check_word_similarities, time_formatter, setup_location_indonesia
 
 pd.options.mode.chained_assignment = None  # default='warn'
 # used_cpu = int(cpu_count() / 2) if int(cpu_count() / 2) >= 1 else 1
@@ -585,7 +585,7 @@ def jobs_process(job_data, cpu, filename, target, is_collected_image=False):
 
 def scraper(keyword_filename):
     cpu = used_cpu
-    regencies, location = setup_location()
+    regencies, location = setup_location_indonesia()
     locations = []
     max_iteration = 30
     province = location

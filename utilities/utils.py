@@ -301,7 +301,7 @@ def get_duplicates(lst):
     return duplicates
 
 
-def setup_location():
+def setup_location_internationalize():
     df = pd.read_csv(f'{parent_directory}/country_data/worldcities.csv')
     validation = False
     while not validation:
@@ -376,6 +376,26 @@ def setup_location():
                 data = f"{city}, {specific_interest_location}, {input_location}"
                 result.append(data)
     return result, input_location
+
+
+def setup_location_indonesia():
+    df = pd.read_csv(f'{parent_directory}/city_data/villages_in_indonesia_with_longitude_latitude.csv')
+    validation = False
+    while not validation:
+        try:
+            input_location = str(input("set your indonesia province location of search "))
+            regency = df.loc[df['name_province'] == input_location.upper()]
+            regency = regency['name_regency'].drop_duplicates()
+            print(regency)
+            pre_validation = input('wanna change of of location ? (click enter to ignore)')
+            validation = True if not pre_validation else False
+            print('---' * 20)
+        except Exception as e:
+            print(e)
+            continue
+    regency_list = regency.to_list()
+
+    return regency_list, input_location
 
 
 def time_formatter(time: datetime.datetime):
