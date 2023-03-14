@@ -27,7 +27,7 @@ def setup_scraper_configuration():
     print(using_surface_search)
     if using_surface_search:
         bag_of_words = setup_bag_of_search_word()
-    regencies, location = setup_location()
+    regencies, location = setup_location_indonesia()
     regency_keyword = []
     for regency in regencies:
         regency_keyword.append(f"{regency} {location}".capitalize())
