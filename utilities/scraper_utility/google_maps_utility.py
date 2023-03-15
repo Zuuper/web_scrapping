@@ -137,8 +137,12 @@ class MapsDataCollection:
                     self.driver.execute_script("arguments[0].scrollTop = arguments[1]", search_result,
                                                vertical_coordinate)
                     all_result = self.driver.find_elements(By.XPATH, list_area)
-                    for result in all_result:
-                        list_result.append(result)
+                    for element in all_result:
+                        if len(self.premature_data) <= 1000:
+                            self.premature_data.append({
+                                'title': element.get_attribute('aria-label'),
+                                'link': element.get_attribute('href')
+                            })
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
                         time.sleep(1)
@@ -184,6 +188,7 @@ class MapsDataCollection:
                                 is_same_position += 1
                         else:
                             scroll_position = search_area_scroll_position
+                            is_same_position = 0
                     except Exception as e:
                         print('error pagination',e)
                         continue
@@ -198,12 +203,7 @@ class MapsDataCollection:
                     continue
             print('list of result is: ',
                   list_result)
-            for element in list_result:
-                if len(self.premature_data) <= 1000:
-                    self.premature_data.append({
-                        'title': element.get_attribute('aria-label'),
-                        'link': element.get_attribute('href')
-                    })
+
             seen_value = set()
             clean_data = []
             for data in self.premature_data:
@@ -211,6 +211,7 @@ class MapsDataCollection:
                     clean_data.append(data)
                     seen_value.add(data['link'])
             self.premature_data = clean_data
+            print(self.premature_data)
             return self.premature_data
         except Exception as e:
             # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
