@@ -50,7 +50,7 @@ class MapsDataCollection:
                                                              'platform': 'ANY'
                                                              })
         self.driver.maximize_window()
-        self.prefix_url = "https://www.google.com/maps/search/"
+        self.prefix_url = "https://www.google.com/maps"
         self.config = json.load(open(config_dir))
         self.premature_data = []
         self.position = ""
