@@ -185,7 +185,7 @@ class MapsDataCollection:
                         else:
                             scroll_position = search_area_scroll_position
                     except Exception as e:
-                        print(e)
+                        print('error pagination',e)
                         continue
                     # start_scrapping = True if num_iteration >= max_iteration else False
                     num_iteration += 1
@@ -196,6 +196,8 @@ class MapsDataCollection:
                     time.sleep(1)
                     error_count += 1
                     continue
+            print('list of result is: ',
+                  list_result)
             for element in list_result:
                 if len(self.premature_data) <= 1000:
                     self.premature_data.append({
