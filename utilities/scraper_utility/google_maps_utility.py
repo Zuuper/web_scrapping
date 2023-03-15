@@ -137,11 +137,10 @@ class MapsDataCollection:
                     self.driver.execute_script("arguments[0].scrollBy(0, 200);", search_result)
                     all_result = self.driver.find_elements(By.XPATH, list_area)
                     for element in all_result:
-                        if len(self.premature_data) <= 1000:
-                            self.premature_data.append({
-                                'title': element.get_attribute('aria-label'),
-                                'link': element.get_attribute('href')
-                            })
+                        self.premature_data.append({
+                            'title': element.get_attribute('aria-label'),
+                            'link': element.get_attribute('href')
+                        })
                     print('total step 1 data is: ',len(self.premature_data))
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
