@@ -131,8 +131,14 @@ class MapsDataCollection:
                 try:
                     time.sleep(1)
                     search_result = self.driver.find_element(By.XPATH, search_area)
+                    is_scrollable = self.driver.execute_script(
+                        "return arguments[0].scrollHeight > arguments[0].clientHeight;", search_area)
                     self.driver.execute_script("arguments[0].scrollTop = arguments[1]", search_result,
                                                vertical_coordinate)
+                    if is_scrollable:
+                        print('element is scrollable')
+                    else :
+                        print('element is not scrollable')
                     list_result = self.driver.find_elements(By.XPATH, list_area)
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
