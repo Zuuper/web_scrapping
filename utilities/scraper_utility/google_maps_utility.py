@@ -172,6 +172,7 @@ class MapsDataCollection:
                     search_area_scroll_position = self.driver.execute_script('return arguments[0].scrollTop;',
                                                                              search_result)
                     pagination = self.driver.find_element(By.XPATH, next_page)
+                    print(pagination)
                     start_scrapping = True if num_iteration >= max_iteration or check_element(self.driver,
                                                                                               end_sign) else False
                     if search_area_scroll_position == height_search_area:
