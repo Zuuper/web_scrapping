@@ -116,7 +116,7 @@ def google_maps_location_collection(search_param, location, max_iteration):
             # print(f'{datetime.datetime.now()} {log} search again')
             print(f'{datetime.datetime.now()} {log} prepare...')
             time.sleep(1)
-            premature_data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=1000)
+            premature_data = engine.location_search(max_iteration=max_iteration, vertical_coordinate=1000000)
             # engine.driver.quit()
             print(f"{datetime.datetime.now()} {log} finish total data: {len(premature_data)}")
             data[param] = premature_data
