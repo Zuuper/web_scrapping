@@ -123,7 +123,7 @@ class MapsDataCollection:
         is_zoom_out = True
         start_scrapping = False
         is_last_time_loading = False
-
+        scroll_position = -1
         try:
             # print('Start scraping data...')
             self.driver.find_element(By.XPATH, zoom_out).click()
@@ -168,16 +168,16 @@ class MapsDataCollection:
                         if is_last_time_loading:
                             is_last_time_loading = False
 
-                    height_search_area = search_result.size['height']
                     search_area_scroll_position = self.driver.execute_script('return arguments[0].scrollTop;',
                                                                              search_result)
                     pagination = self.driver.find_element(By.XPATH, next_page)
-                    print(pagination, 'heigh of search area is: ', height_search_area, '|| search area scroll position is:', search_area_scroll_position)
                     start_scrapping = True if num_iteration >= max_iteration or check_element(self.driver,
                                                                                               end_sign) else False
-                    if search_area_scroll_position == height_search_area:
+                    if search_area_scroll_position == scroll_position:
                         pagination.click()
                         start_scrapping = False
+                    else:
+                        scroll_position = search_area_scroll_position
 
                     # start_scrapping = True if num_iteration >= max_iteration else False
                     num_iteration += 1
