@@ -124,7 +124,7 @@ class MapsDataCollection:
         start_scrapping = False
         is_last_time_loading = False
         scroll_position = -1
-        is_same_position = False
+        is_same_position = 0
         try:
             # print('Start scraping data...')
             self.driver.find_element(By.XPATH, zoom_out).click()
@@ -169,21 +169,24 @@ class MapsDataCollection:
                         if is_last_time_loading:
                             is_last_time_loading = False
 
-                    search_area_scroll_position = self.driver.execute_script('return arguments[0].scrollTop;',
-                                                                             search_result)
-                    pagination = self.driver.find_element(By.XPATH, next_page)
                     start_scrapping = True if num_iteration >= max_iteration or check_element(self.driver,
                                                                                               end_sign) else False
-                    if search_area_scroll_position == scroll_position:
-                        if is_same_position:
-                            pagination.click()
-                            start_scrapping = False
-                            is_same_position = False
-                        else :
-                            is_same_position = True
-                    else:
-                        scroll_position = search_area_scroll_position
-
+                    try:
+                        search_area_scroll_position = self.driver.execute_script('return arguments[0].scrollTop;',
+                                                                                 search_result)
+                        pagination = self.driver.find_element(By.XPATH, next_page)
+                        if search_area_scroll_position == scroll_position:
+                            if is_same_position > 4:
+                                pagination.click()
+                                start_scrapping = False
+                                is_same_position = 0
+                            else :
+                                is_same_position += 1
+                        else:
+                            scroll_position = search_area_scroll_position
+                    except Exception as e:
+                        print(e)
+                        continue
                     # start_scrapping = True if num_iteration >= max_iteration else False
                     num_iteration += 1
                 except Exception as e:
