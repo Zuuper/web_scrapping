@@ -587,7 +587,7 @@ def scraper(keyword_filename):
     cpu = used_cpu
     regencies, location = setup_location_indonesia()
     locations = []
-    max_iteration = 30
+    max_iteration = 1000
     province = location
     step_one_save_directory = f'{parent_directory}/megatron_data/step_1'
     step_one_group_save_directory = f'{parent_directory}/megatron_data/step_1_grouped'
