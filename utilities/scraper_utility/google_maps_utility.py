@@ -134,8 +134,7 @@ class MapsDataCollection:
                     time.sleep(1)
                     # try:
                     search_result = self.driver.find_element(By.XPATH, search_area)
-                    self.driver.execute_script("arguments[0].scrollTop = arguments[1]", search_result,
-                                               vertical_coordinate)
+                    self.driver.execute_script("arguments[0].scrollBy(0, 200);", search_result)
                     all_result = self.driver.find_elements(By.XPATH, list_area)
                     for element in all_result:
                         if len(self.premature_data) <= 1000:
