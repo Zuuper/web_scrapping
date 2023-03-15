@@ -142,6 +142,7 @@ class MapsDataCollection:
                                 'title': element.get_attribute('aria-label'),
                                 'link': element.get_attribute('href')
                             })
+                    print('total step 1 data is: ',len(self.premature_data))
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
                         time.sleep(1)
@@ -200,17 +201,17 @@ class MapsDataCollection:
                     time.sleep(1)
                     error_count += 1
                     continue
-            print('list of result is: ',
-                  list_result)
 
+            print('total step 1 data collected is: ', self.premature_data)
             seen_value = set()
             clean_data = []
             for data in self.premature_data:
                 if data['link'] not in seen_value:
                     clean_data.append(data)
                     seen_value.add(data['link'])
+            print('total cleaned data is: ', len(clean_data))
             self.premature_data = clean_data
-            print(self.premature_data)
+            print('realize step 1 data is: ',len(self.premature_data))
             return self.premature_data
         except Exception as e:
             # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
