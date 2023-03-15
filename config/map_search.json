@@ -26,7 +26,7 @@
       "zoom_out": "//button[@id=\"widget-zoom-out\"]",
       "zoom_in": "//button[@id=\"widget-zoom-in\"]",
       "loading_icon": "//div[@jsan=\"7.qjESne,7.veYFef\"]",
-      "search_area": "//div[@role=\"region\"]",
+      "search_area": "//div[@role=\"region\" and contains(@aria-label, \"Hasil\")]",
       "search_area_article": "//div[@role=\"article\"]",
       "search_area_feed": "//div[@role=\"feed\"]",
       "end_sign": "//span[@class=\"HlvSq\"]",

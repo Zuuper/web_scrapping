@@ -130,6 +130,8 @@ class MapsDataCollection:
             while not start_scrapping:
                 try:
                     time.sleep(1)
+                    search_area = ''
+                    # try:
                     search_result = self.driver.find_element(By.XPATH, search_area)
                     is_scrollable = self.driver.execute_script(
                         "return arguments[0].scrollHeight > arguments[0].clientHeight;", search_area)
