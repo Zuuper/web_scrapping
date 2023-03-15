@@ -112,6 +112,7 @@ class MapsDataCollection:
         loading_sign = utility_config['loading_icon']
         zoom_out = utility_config['zoom_out']
         zoom_in = utility_config['zoom_in']
+        next_page = utility_config['next_page']
         list_result = []
 
         num_iteration = 0
@@ -132,38 +133,33 @@ class MapsDataCollection:
                     time.sleep(1)
                     # try:
                     search_result = self.driver.find_element(By.XPATH, search_area)
-                    is_scrollable = self.driver.execute_script(
-                        "return arguments[0].scrollHeight > arguments[0].clientHeight;", search_area)
                     self.driver.execute_script("arguments[0].scrollTop = arguments[1]", search_result,
                                                vertical_coordinate)
-                    if is_scrollable:
-                        print('element is scrollable')
-                    else :
-                        print('element is not scrollable')
-                    list_result = self.driver.find_elements(By.XPATH, list_area)
+                    all_result = self.driver.find_elements(By.XPATH, list_area)
+                    for result in all_result:
+                        list_result.append(result)
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
                         time.sleep(1)
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
-                        if is_last_time_loading:
-                            if loading_count <= max_loading_count:
-                                if wait_loading_count == max_wait_loading_count:
-                                    if is_zoom_out:
-                                        print('zoom out')
-                                        self.driver.find_element(By.XPATH, zoom_out).click()
-                                        is_zoom_out = False
-                                    else:
-                                        self.driver.find_element(By.XPATH, zoom_in).click()
-                                        is_zoom_out = True
+                        if is_last_time_loading and loading_count <= max_loading_count:
+                            if wait_loading_count == max_wait_loading_count:
+                                if is_zoom_out:
+                                    print('zoom out')
+                                    self.driver.find_element(By.XPATH, zoom_out).click()
+                                    is_zoom_out = False
+                                else:
+                                    self.driver.find_element(By.XPATH, zoom_in).click()
+                                    is_zoom_out = True
 
-                                    wait_loading_count = 0
-                                    check_loading_count = True if loading_count < int(max_loading_count / 2) else False
-                                    is_zoom_out = True if not is_zoom_out and check_loading_count \
-                                        else False if zoom_out and check_loading_count else is_zoom_out
-                                    loading_count += 1
-                                elif wait_loading_count < max_wait_loading_count:
-                                    wait_loading_count += 1
+                                wait_loading_count = 0
+                                check_loading_count = True if loading_count < int(max_loading_count / 2) else False
+                                is_zoom_out = True if not is_zoom_out and check_loading_count \
+                                    else False if zoom_out and check_loading_count else is_zoom_out
+                                loading_count += 1
+                            elif wait_loading_count < max_wait_loading_count:
+                                wait_loading_count += 1
                             else:
                                 start_scrapping = True
                         else:
@@ -171,8 +167,17 @@ class MapsDataCollection:
                     elif not is_loading:
                         if is_last_time_loading:
                             is_last_time_loading = False
+
+                    height_search_area = search_result.size['height']
+                    search_area_scroll_position = self.driver.execute_script('return arguments[0].scrollTop;',
+                                                                             search_result)
+                    pagination = self.driver.find_element(By.XPATH, next_page)
                     start_scrapping = True if num_iteration >= max_iteration or check_element(self.driver,
                                                                                               end_sign) else False
+                    if start_scrapping and search_area_scroll_position == height_search_area:
+                        pagination.click()
+                        start_scrapping = False
+
                     # start_scrapping = True if num_iteration >= max_iteration else False
                     num_iteration += 1
                 except Exception as e:
@@ -188,7 +193,13 @@ class MapsDataCollection:
                         'title': element.get_attribute('aria-label'),
                         'link': element.get_attribute('href')
                     })
-            length_list = len(self.premature_data)
+            seen_value = set()
+            clean_data = []
+            for data in self.premature_data:
+                if data['link'] not in seen_value:
+                    clean_data.append(data)
+                    seen_value.add(data['link'])
+            self.premature_data = clean_data
             return self.premature_data
         except Exception as e:
             # bot_send_message(f"{PC_CODE} limit error is reached, stop location search")
