@@ -106,7 +106,9 @@ class MapsDataCollection:
 
         self.premature_data = []
         utility_config = self.config['surface_search_config']['utility_xpath']
-        search_area = utility_config['search_area']
+        search_area = utility_config['search_area_region']
+        search_area_article = utility_config['search_area_article']
+        search_area_feed = utility_config['search_area_feed']
         end_sign = utility_config['end_sign']
         list_area = utility_config['detail_search_area']
         loading_sign = utility_config['loading_icon']
@@ -132,8 +134,16 @@ class MapsDataCollection:
             while not start_scrapping:
                 try:
                     time.sleep(1)
-                    # try:
-                    search_result = self.driver.find_element(By.XPATH, search_area)
+                    search_result = ''
+                    try:
+                        search_result = self.driver.find_element(By.XPATH, search_area)
+                    except Exception as e:
+                        print(e)
+                        search_result = self.driver.find_element(By.XPATH, search_area_feed)
+                    except Exception as e:
+                        print(e)
+                        search_result = self.driver.find_element(By.XPATH, search_area_article)
+
                     self.driver.execute_script("arguments[0].scrollBy(0, 200);", search_result)
                     all_result = self.driver.find_elements(By.XPATH, list_area)
                     for element in all_result:
