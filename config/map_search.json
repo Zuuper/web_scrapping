@@ -116,7 +116,7 @@
       "child_img": "//div[@role=\"img\"]/div",
       "collection": "style",
       "parent_collection": "",
-      "opening_path": "//div[@role=\"region\"]//button[@jsaction=\"pane.carousel.photo;\"][@data-carousel-index=\"0\"]",
+      "opening_path": "//div[@role=\"region\"  and contains(@aria-label, \"Photo\")]//button[@jsaction=\"pane.carousel.photo\"][@data-carousel-index=\"0\"]",
       "tab_image": "//div[@role=\"tablist\"]",
       "profile": "//button[@jsan=\"7.aoRNLd,7.kn2E5e,7.NMjTrf,7.lvtCsd,0.aria-label,0.jslog,22.jsaction\"]/img",
       "frame": "//iframe[@class=\"widget-scene-imagery-iframe\"]",
