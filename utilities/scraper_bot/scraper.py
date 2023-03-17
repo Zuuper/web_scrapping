@@ -54,7 +54,7 @@ def setup_input_from_surface_result_with_group():
 
 def setup_keyword_for_surface_search():
     list_dir = ['search_keyword_activity.txt', 'search_keyword_hotel.txt', 'search_keyword_restaurant.txt',
-                'search_keyword_villa.txt','search_keyword.txt']
+                'search_keyword_villa.txt', 'search_keyword.txt']
     print('select file keyword you want to user: ')
     list_dir_len = len(list_dir)
     for index in range(list_dir_len):
@@ -550,6 +550,29 @@ def collect_deep_data(surface_result_file_location=None):
             jobs_process_(not_complete_list)
 
 
+def grouping_data(type_data):
+    step_1_file_loc = f'{parent_directory}/megatron_data/step_1'
+    step_1_group_file_loc = f'{parent_directory}/megatron_data/step_1_grouped'
+    step_2_file_loc = f'{parent_directory}/megatron_data/step_2'
+    step_2_group_file_loc = f'{parent_directory}/megatron_data/step_2_grouped'
+    files = ""
+    if type_data == "step_1":
+        files = glob.glob(f"{step_1_file_loc}/*.csv")
+    if type_data == "step_2":
+        files = glob.glob(f"{step_2_file_loc}/*.csv")
+    dfs = []
+    for file in files:
+        df = pd.read_csv(file)
+        dfs.append(df)
+
+    combined_df = pd.concat(dfs, ignore_index=True)
+    pure_df = combined_df.drop_duplicates()
+    if type_data == "step_1":
+        pure_df.to_csv(f"{step_1_group_file_loc}/grouped.csv", index=False)
+    if type_data == "step_2":
+        pure_df.to_csv(f"{step_2_group_file_loc}/grouped.csv", index=False)
+
+
 def format_scraping_result(filename):
     df = pd.read_csv(f"data_scraping_result/{filename}")
     villa_col_name = ['title', 'address', 'contact_number', 'amenities', 'coordinate', 'regency', 'link']
@@ -602,7 +625,7 @@ def scraper(keyword_filename):
         keyword_list = f.read().splitlines()
         keywords = [x for x in keyword_list if x != '']
         # print('keyword step 2', keyword_step_two)
-        print('our list of keyword is: ',keywords)
+        print('our list of keyword is: ', keywords)
         # with open(f'{parent_directory}/log/{init_time_formatter}_{location}.txt', 'a+') as log_file:
         for keyword in keywords:
             for location in locations:
@@ -702,12 +725,11 @@ def scraper(keyword_filename):
                     pass
 
 
-
 if __name__ == '__main__':
     # main()
     collect_surface_and_deep_data(f'{parent_directory}/keywords/search_keyword.txt', 'surface_scraping_result')
-    # setup_surface_scraping_result_with_consistent_name()
-    # check_duplicates('surface_result_with_group/villa.csv')
+    setup_surface_scraping_result_with_consistent_name()
+    check_duplicates('surface_result_with_group/villa.csv')
     collect_deep_data('villa.csv')
     collect_image_of_current_data(r'surface_result_with_group/villa.csv')
     format_scraping_result('villa.csv')

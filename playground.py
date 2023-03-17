@@ -1,7 +1,10 @@
 import pandas as pd
 import os
 
-from utilities.scraper_bot.scraper import check_scraping_result
+from utilities.scraper_bot.scraper import check_scraping_result, grouping_data
+from utilities.scraper_bot.collect_surface_deep_data_and_image import collect_all_data
+from utilities.scraper_bot.scraper import scraper, setup_keyword_for_surface_search, parent_directory
+
 
 
 def get_all_data():
@@ -88,4 +91,4 @@ def create_new_saved_file():
 
 
 if __name__ == '__main__':
-    get_all_data()
+    grouping_data("step_1")
