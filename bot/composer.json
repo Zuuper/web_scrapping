@@ -1,0 +1,5 @@
+{
+    "require": {
+        "graze/parallel-process": "^0.8.1"
+    }
+}
