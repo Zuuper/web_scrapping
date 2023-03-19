@@ -158,7 +158,7 @@ class MapsDataCollection:
                                 'link': element.get_attribute('href')
                             })
                             seen_value.add(el_data['link'])
-                    print('total step 1 data is: ',len(self.premature_data))
+                    print('total step 1 data is: ', len(self.premature_data))
                     is_loading = True if check_element(self.driver, loading_sign) and num_iteration >= 4 else False
                     if is_loading:
                         time.sleep(1)
@@ -197,10 +197,13 @@ class MapsDataCollection:
                         pagination = self.driver.find_element(By.XPATH, next_page)
                         if search_area_scroll_position == scroll_position:
                             if is_same_position > 4:
-                                pagination.click()
-                                start_scrapping = False
-                                is_same_position = 0
-                            else :
+                                if pagination.is_enabled():
+                                    pagination.click()
+                                    start_scrapping = False
+                                    is_same_position = 0
+                                else:
+                                    break
+                            else:
                                 is_same_position += 1
                         else:
                             scroll_position = search_area_scroll_position
