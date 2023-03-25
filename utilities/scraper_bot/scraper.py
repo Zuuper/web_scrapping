@@ -80,6 +80,7 @@ def init_options():
     options.add_argument(data['user-data-dir'])
     options.add_argument(data['profile-dir'])
     options.add_argument(data['windows-size'])
+    options.add_argument('--disable-blink-features=AutomationControlled')
     return options
 
 
