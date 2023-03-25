@@ -134,6 +134,7 @@ class MapsDataCollection:
             self.driver.find_element(By.XPATH, zoom_out).click()
             error_count = 0
             while not start_scrapping:
+                num_iteration += 1
                 try:
                     time.sleep(1)
                     try:
@@ -210,15 +211,17 @@ class MapsDataCollection:
                             is_same_position = 0
                     except Exception as e:
                         print('error pagination', e)
+                        num_iteration += 1
                         continue
                     # start_scrapping = True if num_iteration >= max_iteration else False
-                    num_iteration += 1
                 except Exception as e:
                     print(f"{datetime.datetime.now} {e}")
                     if error_count >= 10:
                         raise Exception("limit error is reached, stop location search")
                     time.sleep(1)
                     error_count += 1
+                    num_iteration += 1
+
                     continue
 
             print('total step 1 data collected is: ', self.premature_data)
