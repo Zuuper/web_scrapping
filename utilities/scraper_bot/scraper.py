@@ -433,13 +433,13 @@ def collect_surface_data(filename, surface_save_directory):
             print(f"result len keyword is {len_keyword}")
 
 
-def setup_surface_scraping_result_with_consistent_name():
-    list_dir = os.listdir(f'{parent_directory}/megatron_data/step_1')
+def scraping_result_with_consistent_name(folder_name):
+    list_dir = os.listdir(f'{parent_directory}/megatron_data/{folder_name}')
     for dir_ in list_dir:
         name_split = dir_.split("_")
         name = name_split[0]
-        true_name = check_word_similarities('config/scraper_result_classification', name)
-        true_filename = f'surface_result_with_group/{true_name}.csv'
+        true_name = check_word_similarities(f'{parent_directory}/config/scraper_result_classification', name)
+        true_filename = f'{parent_directory}/megatron_data/{folder_name}_grouped/{true_name}.csv'
         print(f"{dir_} -> {true_name}")
         df = pd.read_csv(f"surface_scraping_result/{dir_}")
         print(len(df))
@@ -453,7 +453,7 @@ def setup_surface_scraping_result_with_consistent_name():
 
 def collect_surface_and_deep_data(filename, surface_save_directory):
     cpu = used_cpu
-    regencies, location = setup_location()
+    regencies, location = setup_location_indonesia()
     locations = []
     max_iteration = 100
     province = location
