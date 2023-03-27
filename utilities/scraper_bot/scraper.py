@@ -436,12 +436,13 @@ def collect_surface_data(filename, surface_save_directory):
 def scraping_result_with_consistent_name(folder_name):
     list_dir = os.listdir(f'{parent_directory}/megatron_data/{folder_name}')
     for dir_ in list_dir:
+        if "txt" in dir_: continue
         name_split = dir_.split("_")
         name = name_split[0]
         true_name = check_word_similarities(f'{parent_directory}/config/scraper_result_classification', name)
         true_filename = f'{parent_directory}/megatron_data/{folder_name}_grouped/{true_name}.csv'
         print(f"{dir_} -> {true_name}")
-        df = pd.read_csv(f"surface_scraping_result/{dir_}")
+        df = pd.read_csv(f"{parent_directory}/megatron_data/{folder_name}/{dir_}")
         print(len(df))
         try:
             save_surface_scraping_result(true_filename, df, '')

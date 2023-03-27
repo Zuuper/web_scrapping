@@ -6,7 +6,6 @@ from utilities.scraper_bot.collect_surface_deep_data_and_image import collect_al
 from utilities.scraper_bot.scraper import scraper, setup_keyword_for_surface_search, parent_directory
 
 
-
 def get_all_data():
     file_dirs = os.listdir('backup (do not touch)/All PC Data')
     for filedir in file_dirs:
@@ -50,13 +49,13 @@ def get_all_data():
             print(filename)
             list_data[idx].to_csv(f'./All PC Data Master/{filename}', index=False)
             try:
-                missing_data = setup_master_file(filename.replace('.csv',''), list_data[idx])
+                missing_data = setup_master_file(filename.replace('.csv', ''), list_data[idx])
                 new_df = pd.DataFrame.from_dict(missing_data)
                 try:
                     old_df = pd.read_csv(f'./All PC Data Master Not Complete/{filename}.csv')
                 except:
                     old_df = pd.DataFrame()
-                new_df = pd.concat([old_df,new_df], ignore_index=True)
+                new_df = pd.concat([old_df, new_df], ignore_index=True)
                 new_df.to_csv(f'./All PC Data Master Not Complete/{filename}')
 
 
